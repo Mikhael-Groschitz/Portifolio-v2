@@ -1,0 +1,58 @@
+:root {
+  color-scheme: dark;
+
+  /* Structure */
+  --bg-window: #1f1f1f;
+  --bg-panel: #1f1f1f;
+  --bg-editor: #1e1e1e;
+  --border: #3d3d3d;
+  --text: #fafafa;
+  --text-muted: #b2b2b2;
+  --accent: #7160e8;
+  --selection: #0078d4;
+
+  /* Bars */
+  --status-connected: #f0e68c;
+  --status-ready: #424242;
+
+  /* Results grid */
+  --grid-header: #1f1f1f;
+  --grid-row: #1f1f1f;
+  --grid-row-selected: #e8edf2;
+  --grid-border: #424242;
+
+  /* Messages */
+  --text-error: #f36877;
+  --text-success: #92e492;
+
+  /* IntelliSense */
+  --intellisense-bg: #202020;
+  --intellisense-selected: #173045;
+  --intellisense-border: #292929;
+
+  /* Syntax */
+  --syntax-keyword: #569cd6;
+  --syntax-string: #e05a61;
+  --syntax-comment: #57a64a;
+  --syntax-function: #ce67d3;
+  --syntax-type: #569cd6;
+  --syntax-variable: #d6d6d6;
+  --syntax-number: #b5cea8;
+  --syntax-operator: #878787;
+
+  /* Extra tokens the screenshots require */
+  --bg-tabstrip: #2e2e2e;
+  --bg-tab-active: #3d3d3d;
+  --bg-input: #383838;
+  --bg-messages: #2d2d30;
+  --text-menu: #d6d6d6;
+  --text-disabled: #5c5c5c;
+  --text-on-status: #000000;
+  --text-on-selection: #ffffff;
+  --grid-row-selected-text: #000000;
+  --focus-ring: #8e81ed;
+
+  /* Fonts: system stacks only, nothing embedded */
+  --font-code: Consolas, "Cascadia Mono", ui-monospace, monospace;
+  --font-ui: "Segoe UI", system-ui, sans-serif;
+}

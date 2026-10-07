@@ -8,7 +8,7 @@ A versão atual continua no ar em [mgroschitz.dev](https://mgroschitz.dev) enqua
 
 ## Status
 
-Em construção. Por enquanto existem a base do projeto e a paleta de cores, que dá para ver em `/palette`.
+Em construção. Já existem a base do projeto, a paleta de cores (`/palette`) e a versão simples (`/simple`) com o conteúdo do portfólio.
 
 ## Stack
 
@@ -43,8 +43,8 @@ O site abre em `http://localhost:3000`.
 ```text
 src/
   app/          rotas
-  components/   interface: janela, Object Explorer, editor, resultados
-  content/      os dados do portfólio, por idioma
+  components/   interface: janela, Object Explorer, editor, resultados e versão simples
+  content/      todos os textos do site (globals.ts), em português e inglês
   engine/       interpretador dos comandos, em TypeScript puro
   game/         um segredo
   theme/        tokens de cor e tema do destaque de sintaxe
@@ -55,7 +55,8 @@ src/
 - Todas as cores vêm de `src/theme/tokens.css`. Os componentes usam as variáveis CSS e o tema do Shiki aponta para as mesmas variáveis, então mudar uma cor é mexer em um lugar só. Um teste garante que todos os tokens existem e que os pares de texto e fundo passam no contraste AA da WCAG.
 - Estilos com CSS Modules; o CSS global fica só em `src/app/globals.css`.
 - Fontes do sistema, sem nenhuma fonte embutida.
-- O conteúdo fica em `src/content/`, separado dos componentes.
+- Todos os textos do site ficam em `src/content/globals.ts`, um bloco por idioma. Um teste garante que os dois idiomas têm a mesma estrutura e que nomes, datas, links e tecnologias batem entre eles. A mesma fonte alimenta a versão simples e vai alimentar a grade de resultados.
+- O site existe em português e inglês. Na primeira visita vale o idioma do sistema (o que não for português abre em inglês); depois, a escolha do visitante fica salva. Um `LanguageProvider` coordena a troca, que acontece no navegador, sem mudar a URL e sem piscar o idioma errado. Sem JavaScript, a página aparece em português.
 - Nada do que o visitante digita é executado como código.
 - Ícones próprios em SVG, sem marcas da Microsoft.
 - Commits seguem o padrão Conventional Commits.
@@ -63,7 +64,7 @@ src/
 ## Roadmap
 
 - [x] Base do projeto e paleta de cores
-- [ ] Conteúdo e versão simples
+- [x] Conteúdo e versão simples
 - [ ] Janela do SSMS
 - [ ] Scripts das seções e Object Explorer
 - [ ] Execução das consultas

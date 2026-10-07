@@ -1,15 +1,26 @@
 import type { Metadata } from "next";
+import { LanguageProvider } from "@/components/locale/language-context";
+import { LOCALE_SCRIPT } from "@/components/locale/locale-runtime";
+import { getTexts } from "@/content";
+import { DEFAULT_LOCALE } from "@/content/locales";
 import "./globals.css";
 
+const { about } = getTexts(DEFAULT_LOCALE);
+
 export const metadata: Metadata = {
-  title: "TODO: título do site",
+  title: `${about.name} | ${about.role}`,
   description: "TODO: descrição do site",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR">
-      <body>{children}</body>
+    <html lang={DEFAULT_LOCALE} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: LOCALE_SCRIPT }} />
+      </head>
+      <body>
+        <LanguageProvider>{children}</LanguageProvider>
+      </body>
     </html>
   );
 }

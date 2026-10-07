@@ -25,3 +25,20 @@ a {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
+
+html:not([data-locale="en"]) [data-locale-block="en"],
+html[data-locale="en"] [data-locale-block="pt-BR"] {
+  display: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  border: 0;
+  white-space: nowrap;
+}

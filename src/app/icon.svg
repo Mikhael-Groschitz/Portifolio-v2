@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <style>
+    .ink { stroke: #1f1f1f; }
+    .code { stroke: #7160e8; }
+    @media (prefers-color-scheme: dark) {
+      .ink { stroke: #fafafa; }
+      .code { stroke: #8e81ed; }
+    }
+  </style>
+  <g class="ink">
+    <ellipse cx="16" cy="9" rx="12" ry="5" />
+    <path d="M4 9v14a12 5 0 0 0 24 0V9" />
+    <path d="M4 16a12 5 0 0 0 24 0" />
+    <path d="M10.5 17.3h6M20.5 17.3h0M11.5 24.3h0M15.5 24.3h6" />
+  </g>
+  <path class="code" d="M12.5 6.8 10.3 9l2.2 2.2M19.5 6.8 21.7 9l-2.2 2.2M16.9 6.2l-1.8 5.6" />
+</svg>

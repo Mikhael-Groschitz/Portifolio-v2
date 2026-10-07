@@ -49,3 +49,20 @@ describe("shiki theme", () => {
     expect(colorOfText("'x'")).toBe("var(--syntax-string)");
   });
 });
+
+describe("site icon", () => {
+  it("only uses palette colors", () => {
+    const icon = readFileSync(
+      new URL("../app/icon.svg", import.meta.url),
+      "utf8",
+    );
+    const palette = new Set(tokens.values());
+    const colors = [...icon.matchAll(/#[0-9a-f]{6}\b/gi)].map(([color]) =>
+      color.toLowerCase(),
+    );
+    expect(colors.length).toBeGreaterThan(0);
+    for (const color of colors) {
+      expect(palette.has(color), color).toBe(true);
+    }
+  });
+});

@@ -1,0 +1,12 @@
+.toggle {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.toggle:hover {
+  border-color: var(--text-muted);
+}

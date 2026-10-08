@@ -19,7 +19,7 @@ import { DOCUMENT_PANEL_ID, documentTabId } from "./document-ids";
 import styles from "./editor.module.css";
 
 export function DocumentTabs({ label }: Readonly<{ label: Localized }>) {
-  const { tabs, activeSection, openSection, closeSection } = useWorkspace();
+  const { tabs, activeSection, activateSection, closeSection } = useWorkspace();
   const [focusedId, setFocusedId] = useState<SectionId | null>(null);
   const tabRefs = useRef(new Map<SectionId, HTMLButtonElement>());
   const labelId = useId();
@@ -121,7 +121,7 @@ export function DocumentTabs({ label }: Readonly<{ label: Localized }>) {
                 tabIndex={section === tabStop ? 0 : -1}
                 data-section={section}
                 className={styles.tabButton}
-                onClick={() => openSection(section)}
+                onClick={() => activateSection(section)}
               >
                 {catalogObject(section).name}.sql
               </button>

@@ -10,10 +10,10 @@ function ScriptView({
   lines,
 }: Readonly<{ section: SectionId; lines: readonly CodeToken[][] }>) {
   return (
-    <div
-      role="region"
+    <section
       tabIndex={0}
       aria-labelledby={documentTabId(section)}
+      data-editor=""
       className={styles.editor}
     >
       <pre className={styles.code}>
@@ -44,7 +44,7 @@ function ScriptView({
           ))}
         </code>
       </pre>
-    </div>
+    </section>
   );
 }
 

@@ -80,3 +80,33 @@
   stroke: var(--text);
   stroke-width: 1.2;
 }
+
+.warning {
+  fill: var(--status-warning-icon);
+  stroke: var(--text);
+}
+
+.warningMark {
+  stroke: var(--text-on-status);
+  stroke-width: 1.6;
+}
+
+.spinner {
+  animation: spin 0.8s linear infinite;
+}
+
+.spinnerTrack {
+  opacity: 0.25;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}

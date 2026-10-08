@@ -40,14 +40,24 @@
 }
 
 .view {
+  position: relative;
   flex: 1;
   min-height: 0;
   overflow: auto;
   border: 1px solid var(--border);
+  background: var(--grid-row);
 }
 
 .view:focus-visible {
   outline-offset: -2px;
+}
+
+.view > [data-locale-block] {
+  animation: appear 150ms ease-out;
+}
+
+.messagesView {
+  background: var(--bg-messages);
 }
 
 .grid {
@@ -82,8 +92,21 @@
   white-space: normal;
 }
 
-.messagesView {
-  background: var(--bg-messages);
+.grid .selected {
+  background: var(--grid-row-selected);
+  color: var(--grid-row-selected-text);
+}
+
+.grid a {
+  color: inherit;
+}
+
+.null {
+  color: var(--text-muted);
+}
+
+.selected .null {
+  color: inherit;
 }
 
 .messages {
@@ -93,6 +116,22 @@
   font-family: var(--font-code);
   font-size: 13px;
   white-space: pre-wrap;
+}
+
+.error {
+  color: var(--text-error);
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .view > [data-locale-block] {
+    animation: none;
+  }
 }
 
 @media (max-width: 767px) {

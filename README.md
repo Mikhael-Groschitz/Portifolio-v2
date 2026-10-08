@@ -8,7 +8,7 @@ A versão atual continua no ar em [mgroschitz.dev](https://mgroschitz.dev) enqua
 
 ## Status
 
-Em construção. A janela do SSMS já funciona como navegação: cada tabela do Object Explorer abre o próprio script T-SQL numa aba, e cada seção tem o seu endereço (`/about`, `/tech-stack`, `/career`, `/projects`, `/beyond-the-terminal`, `/contact` e `/resume`). As consultas ainda não executam. Também existem a paleta de cores (`/palette`) e a versão simples (`/simple`) com o conteúdo do portfólio.
+Em construção. A janela do SSMS já funciona: cada tabela do Object Explorer abre o próprio script T-SQL numa aba e executa na hora. A grade mostra os dados, a aba de mensagens mostra as linhas afetadas e o horário de conclusão, e a barra amarela acompanha o resultado. Cada seção tem o seu endereço (`/about`, `/tech-stack`, `/career`, `/projects`, `/beyond-the-terminal`, `/contact` e `/resume`), e a procedure `sp_DownloadCV` entrega o currículo em PDF. Também existem a paleta de cores (`/palette`) e a versão simples (`/simple`) com o conteúdo do portfólio.
 
 ## Stack
 
@@ -62,6 +62,8 @@ src/
 - No celular, o Object Explorer vira uma gaveta lateral e os menus menos usados se recolhem em um botão; a Ajuda continua à vista.
 - O estado da interface usa só recursos do React (Context e `useReducer`), sem biblioteca extra.
 - A URL manda na aba ativa: abrir uma tabela muda o endereço, e voltar, avançar ou recarregar a página leva sempre à aba certa. As abas abertas não se repetem e a última nunca fecha.
+- A execução é simulada por um motor em TypeScript puro (`src/engine/execute.ts`), sem React e sem DOM. Ele normaliza o comando (maiúsculas, `;`, `GO` e comentários) e responde com as linhas do conteúdo ou com um erro no formato do SQL Server. A página de cada seção já sai do servidor com a grade preenchida, então o conteúdo está no HTML mesmo sem JavaScript.
+- F5 só executa com o foco no editor; fora dele, a tecla continua recarregando a página. O botão Executar roda o script da aba ativa.
 - Os scripts são montados a partir do catálogo de objetos (`src/engine/catalog.ts`), o mesmo que alimenta a árvore, e coloridos pelo Shiki no build. Por cima do Shiki há um ajuste: nomes de coluna como `Role` e `Description` voltam à cor de identificador, e `AND`, `OR`, `LIKE` e a pontuação ficam cinza, como no SSMS.
 - Nada do que o visitante digita é executado como código.
 - Ícones próprios em SVG, sem marcas da Microsoft.
@@ -73,7 +75,7 @@ src/
 - [x] Conteúdo e versão simples
 - [x] Janela do SSMS
 - [x] Scripts das seções e Object Explorer
-- [ ] Execução das consultas
+- [x] Execução das consultas
 - [ ] Tela de conexão
 - [ ] Nova consulta com autocomplete
 - [ ] Guia para quem não conhece SQL

@@ -279,3 +279,33 @@ export function MessagesIcon(props: Readonly<IconProps>) {
     </Icon>
   );
 }
+
+export function SuccessIcon(props: Readonly<IconProps>) {
+  return (
+    <Icon {...props}>
+      <circle className={styles.statusBadge} cx="8" cy="8" r="6.5" />
+      <path className={styles.statusBadgeMark} d="M4.8 8.2l2.2 2.2 4.2-4.6" />
+    </Icon>
+  );
+}
+
+export function WarningIcon(props: Readonly<IconProps>) {
+  return (
+    <Icon {...props}>
+      <path className={styles.warning} d="M8 1.5l6.8 12.5H1.2z" />
+      <path className={styles.warningMark} d="M8 6v3.6M8 11v1.2" />
+    </Icon>
+  );
+}
+
+export function SpinnerIcon(props: Readonly<IconProps>) {
+  const className = props.className
+    ? `${styles.spinner} ${props.className}`
+    : styles.spinner;
+  return (
+    <Icon {...props} className={className}>
+      <circle className={styles.spinnerTrack} cx="8" cy="8" r="5.5" />
+      <path d="M8 2.5a5.5 5.5 0 0 1 5.5 5.5" strokeWidth="1.6" />
+    </Icon>
+  );
+}

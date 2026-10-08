@@ -1,6 +1,6 @@
 import { type CatalogObject, DATABASE, qualifiedName } from "./catalog";
 
-function query(object: CatalogObject): string[] {
+function queryLines(object: CatalogObject): string[] {
   if (object.kind === "procedure") {
     return [`EXEC ${qualifiedName(object)};`];
   }
@@ -13,6 +13,10 @@ function query(object: CatalogObject): string[] {
   return [select, from, `ORDER BY ${object.orderBy.column}${direction};`];
 }
 
+export function sectionQuery(object: CatalogObject): string {
+  return queryLines(object).join("\n");
+}
+
 export function sectionScript(
   object: CatalogObject,
   comments: readonly string[],
@@ -22,6 +26,6 @@ export function sectionScript(
     `USE ${DATABASE};`,
     "GO",
     "",
-    ...query(object),
+    ...queryLines(object),
   ].join("\n");
 }

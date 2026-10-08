@@ -12,9 +12,13 @@ export const SCHEMA = "dbo";
 
 export type CatalogObjectKind = "table" | "procedure";
 
+export type CatalogColumnType = "text" | "long" | "url" | "download";
+
 export interface CatalogColumn {
   name: string;
   field: string;
+  type: CatalogColumnType;
+  fileField?: string;
 }
 
 export interface CatalogOrder {
@@ -30,8 +34,12 @@ export interface CatalogObject {
   orderBy?: CatalogOrder;
 }
 
-function column(name: string, field: string): CatalogColumn {
-  return { name, field };
+function column(
+  name: string,
+  field: string,
+  type: CatalogColumnType = "text",
+): CatalogColumn {
+  return { name, field, type };
 }
 
 export const CATALOG: readonly CatalogObject[] = [
@@ -42,7 +50,7 @@ export const CATALOG: readonly CatalogObject[] = [
     columns: [
       column("Name", "name"),
       column("Role", "role"),
-      column("Summary", "summary"),
+      column("Summary", "summary", "long"),
     ],
   },
   {
@@ -64,7 +72,7 @@ export const CATALOG: readonly CatalogObject[] = [
       column("Role", "role"),
       column("StartDate", "startDate"),
       column("EndDate", "endDate"),
-      column("Description", "description"),
+      column("Description", "description", "long"),
     ],
     orderBy: { column: "StartDate", descending: true },
   },
@@ -75,17 +83,20 @@ export const CATALOG: readonly CatalogObject[] = [
     columns: [
       column("Name", "name"),
       column("Category", "categories"),
-      column("Description", "description"),
+      column("Description", "description", "long"),
       column("Stack", "stack"),
-      column("RepoUrl", "repoUrl"),
-      column("DemoUrl", "demoUrl"),
+      column("RepoUrl", "repoUrl", "url"),
+      column("DemoUrl", "demoUrl", "url"),
     ],
   },
   {
     section: "beyond-the-terminal",
     kind: "table",
     name: "BeyondTheTerminal",
-    columns: [column("Trait", "trait"), column("Description", "description")],
+    columns: [
+      column("Trait", "trait"),
+      column("Description", "description", "long"),
+    ],
   },
   {
     section: "contact",
@@ -94,14 +105,17 @@ export const CATALOG: readonly CatalogObject[] = [
     columns: [
       column("Channel", "channel"),
       column("Value", "value"),
-      column("Url", "url"),
+      column("Url", "url", "url"),
     ],
   },
   {
     section: "resume",
     kind: "procedure",
     name: "sp_DownloadCV",
-    columns: [column("FileName", "fileName"), column("Url", "url")],
+    columns: [
+      column("FileName", "fileName"),
+      { ...column("Url", "url", "download"), fileField: "fileName" },
+    ],
   },
 ];
 

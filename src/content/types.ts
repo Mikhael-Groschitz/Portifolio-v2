@@ -113,6 +113,25 @@ export interface MenuText {
   items: Record<MenuItemId, string>;
 }
 
+export interface ResultsText {
+  results: string;
+  messages: string;
+  rowNumber: string;
+  rowsAffected: CountText;
+  completionTime: string;
+  errorHeader: string;
+  opensInNewTab: string;
+}
+
+export interface ConnectionText {
+  connected: string;
+  executing: string;
+  succeeded: string;
+  failed: string;
+  login: string;
+  rows: CountText;
+}
+
 export interface ShellText {
   windowTitle: string;
   languageName: string;
@@ -139,17 +158,8 @@ export interface ShellText {
     column: string;
   };
   scripts: Record<SectionId, string[]>;
-  results: {
-    results: string;
-    messages: string;
-    rowNumber: string;
-    rowsAffected: CountText;
-  };
-  connection: {
-    connected: string;
-    login: string;
-    rows: CountText;
-  };
+  results: ResultsText;
+  connection: ConnectionText;
   status: {
     ready: string;
   };

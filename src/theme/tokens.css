@@ -56,7 +56,9 @@
   --tree-expander-border: #919191;
   --tree-expander-glyph: #4b63a7;
   --status-success-icon: #339933;
+  --status-warning-icon: #ffcc00;
   --status-separator: #bdbdbd;
+  --icon-execute: #84d081;
 
   /* Fonts: system stacks only, nothing embedded */
   --font-code: Consolas, "Cascadia Mono", ui-monospace, monospace;

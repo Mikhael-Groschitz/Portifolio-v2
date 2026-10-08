@@ -10,24 +10,38 @@ import {
   useEffect,
   useMemo,
   useReducer,
+  useRef,
 } from "react";
 import { SECTION_IDS, type SectionId } from "@/content/types";
+import { executeSection } from "./section-execution";
 import { sectionFromSegment, sectionPath } from "./section-routes";
 import {
+  type Run,
+  connectionRun,
   initialWorkspace,
   neighborAfterClose,
+  userRun,
   withActive,
   workspaceReducer,
 } from "./workspace-state";
 
+const EXECUTION_DELAY_MS = 150;
+
 interface WorkspaceContextValue {
   tabs: readonly SectionId[];
   activeSection: SectionId;
+  activeRun: Run;
+  activateSection: (section: SectionId) => void;
   openSection: (section: SectionId) => void;
+  runSection: (section: SectionId) => void;
   closeSection: (section: SectionId) => void;
 }
 
 const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
+
+function startWorkspace(section: SectionId) {
+  return initialWorkspace(section, executeSection(section));
+}
 
 export function WorkspaceProvider({
   children,
@@ -37,9 +51,16 @@ export function WorkspaceProvider({
   const [state, dispatch] = useReducer(
     workspaceReducer,
     activeSection,
-    initialWorkspace,
+    startWorkspace,
   );
   const tabs = withActive(state.tabs, activeSection);
+  const storedRun = state.runs[activeSection];
+  const activeRun = useMemo(
+    () => storedRun ?? connectionRun(executeSection(activeSection)),
+    [storedRun, activeSection],
+  );
+  const runIds = useRef(0);
+  const timers = useRef(new Set<number>());
 
   useEffect(() => {
     for (const section of SECTION_IDS) {
@@ -47,7 +68,37 @@ export function WorkspaceProvider({
     }
   }, [router]);
 
-  const openSection = useCallback(
+  useEffect(() => {
+    const pending = timers.current;
+    return () => {
+      for (const timer of pending) {
+        window.clearTimeout(timer);
+      }
+    };
+  }, []);
+
+  const runSection = useCallback((section: SectionId) => {
+    runIds.current += 1;
+    const id = runIds.current;
+    const startedAt = performance.now();
+    dispatch({ type: "start", section, id });
+    const timer = window.setTimeout(() => {
+      timers.current.delete(timer);
+      dispatch({
+        type: "finish",
+        section,
+        run: userRun(
+          id,
+          executeSection(section),
+          new Date(),
+          performance.now() - startedAt,
+        ),
+      });
+    }, EXECUTION_DELAY_MS);
+    timers.current.add(timer);
+  }, []);
+
+  const activateSection = useCallback(
     (section: SectionId) => {
       startTransition(() => {
         dispatch({ type: "open", section, active: activeSection });
@@ -57,6 +108,14 @@ export function WorkspaceProvider({
       });
     },
     [activeSection, router],
+  );
+
+  const openSection = useCallback(
+    (section: SectionId) => {
+      activateSection(section);
+      runSection(section);
+    },
+    [activateSection, runSection],
   );
 
   const closeSection = useCallback(
@@ -77,8 +136,24 @@ export function WorkspaceProvider({
   );
 
   const value = useMemo(
-    () => ({ tabs, activeSection, openSection, closeSection }),
-    [tabs, activeSection, openSection, closeSection],
+    () => ({
+      tabs,
+      activeSection,
+      activeRun,
+      activateSection,
+      openSection,
+      runSection,
+      closeSection,
+    }),
+    [
+      tabs,
+      activeSection,
+      activeRun,
+      activateSection,
+      openSection,
+      runSection,
+      closeSection,
+    ],
   );
 
   return <WorkspaceContext value={value}>{children}</WorkspaceContext>;

@@ -1,13 +1,10 @@
 import Link from "next/link";
-import {
-  ExecuteIcon,
-  NewQueryIcon,
-  SimpleVersionIcon,
-} from "@/components/icons";
+import { NewQueryIcon, SimpleVersionIcon } from "@/components/icons";
 import { LocaleText } from "@/components/locale/locale-text";
 import { localize } from "@/content";
 import { mapLocalized } from "@/content/locales";
 import { DATABASE } from "@/engine/catalog";
+import { ExecuteButton } from "./execute-button";
 import { ExplorerToggle } from "./explorer-toggle";
 import styles from "./toolbar.module.css";
 
@@ -36,12 +33,7 @@ export function Toolbar() {
           <option value={DATABASE}>{DATABASE}</option>
         </select>
       </label>
-      <button type="button" className={styles.button} disabled>
-        <ExecuteIcon />
-        <span className={styles.label}>
-          <LocaleText text={mapLocalized(text, (toolbar) => toolbar.execute)} />
-        </span>
-      </button>
+      <ExecuteButton label={mapLocalized(text, (toolbar) => toolbar.execute)} />
       <span className={styles.separator} aria-hidden="true" />
       <Link href="/simple" className={`${styles.button} ${styles.simple}`}>
         <SimpleVersionIcon />

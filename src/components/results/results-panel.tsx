@@ -8,8 +8,15 @@ import {
   useState,
 } from "react";
 import { GridIcon, MessagesIcon } from "@/components/icons";
+import { LocaleBlocks } from "@/components/locale/locale-blocks";
 import { LocaleText } from "@/components/locale/locale-text";
+import { useLoadedAt } from "@/components/shell/use-loaded-at";
+import { useWorkspace } from "@/components/shell/workspace-context";
+import type { Run } from "@/components/shell/workspace-state";
 import type { Localized } from "@/content/locales";
+import type { ResultsText } from "@/content/types";
+import { MessagesPane } from "./messages-pane";
+import { ResultsGrid } from "./results-grid";
 import styles from "./results.module.css";
 
 const VIEWS = ["results", "messages"] as const;
@@ -28,28 +35,30 @@ const VIEW_CLASSES: Record<ResultsView, string> = {
 
 interface ResultsPanelProps {
   labels: Record<ResultsView, Localized>;
-  results: ReactNode;
-  messages: ReactNode;
+  text: Localized<ResultsText>;
 }
 
-export function ResultsPanel({
-  labels,
-  results,
-  messages,
-}: Readonly<ResultsPanelProps>) {
+interface RunViewsProps extends ResultsPanelProps {
+  run: Run;
+}
+
+function RunViews({ run, labels, text }: Readonly<RunViewsProps>) {
   const baseId = useId();
-  const [active, setActive] = useState<ResultsView>("results");
+  const loadedAt = useLoadedAt();
+  const views: readonly ResultsView[] =
+    run.status === "error" ? ["messages"] : VIEWS;
+  const [chosen, setChosen] = useState<ResultsView>("results");
+  const active = views.includes(chosen) ? chosen : views[0];
   const tabRefs = useRef(new Map<ResultsView, HTMLButtonElement>());
-  const panels: Record<ResultsView, ReactNode> = { results, messages };
 
   function select(view: ResultsView) {
-    setActive(view);
+    setChosen(view);
     tabRefs.current.get(view)?.focus();
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
-    const index = VIEWS.indexOf(active);
-    const last = VIEWS.length - 1;
+    const index = views.indexOf(active);
+    const last = views.length - 1;
     const targets: Record<string, number> = {
       ArrowRight: index === last ? 0 : index + 1,
       ArrowLeft: index === 0 ? last : index - 1,
@@ -61,13 +70,45 @@ export function ResultsPanel({
       return;
     }
     event.preventDefault();
-    select(VIEWS[target]);
+    select(views[target]);
+  }
+
+  function content(view: ResultsView): ReactNode {
+    if (run.status === "executing") {
+      return null;
+    }
+    const completedAt = run.completedAt ?? loadedAt;
+    return (
+      <LocaleBlocks>
+        {(locale) => {
+          const outcome = run.outcomes[locale];
+          if (view === "messages") {
+            return (
+              <MessagesPane
+                outcome={outcome}
+                text={text[locale]}
+                completedAt={completedAt}
+              />
+            );
+          }
+          return (
+            outcome.kind === "rows" && (
+              <ResultsGrid
+                resultSet={outcome.resultSet}
+                rowNumberLabel={text[locale].rowNumber}
+                newTabLabel={text[locale].opensInNewTab}
+              />
+            )
+          );
+        }}
+      </LocaleBlocks>
+    );
   }
 
   return (
     <div className={styles.panel}>
       <div role="tablist" className={styles.tabs} onKeyDown={handleKeyDown}>
-        {VIEWS.map((view) => (
+        {views.map((view) => (
           <button
             key={view}
             ref={(element) => {
@@ -85,14 +126,14 @@ export function ResultsPanel({
             aria-controls={`${baseId}-${view}-panel`}
             tabIndex={active === view ? 0 : -1}
             className={styles.tab}
-            onClick={() => setActive(view)}
+            onClick={() => setChosen(view)}
           >
             {VIEW_ICONS[view]}
             <LocaleText text={labels[view]} />
           </button>
         ))}
       </div>
-      {VIEWS.map((view) => (
+      {views.map((view) => (
         <div
           key={view}
           id={`${baseId}-${view}-panel`}
@@ -102,9 +143,20 @@ export function ResultsPanel({
           hidden={active !== view}
           className={VIEW_CLASSES[view]}
         >
-          {panels[view]}
+          {content(view)}
         </div>
       ))}
     </div>
+  );
+}
+
+export function ResultsPanel(props: Readonly<ResultsPanelProps>) {
+  const { activeSection, activeRun } = useWorkspace();
+  return (
+    <RunViews
+      key={`${activeSection}-${activeRun.id}`}
+      run={activeRun}
+      {...props}
+    />
   );
 }

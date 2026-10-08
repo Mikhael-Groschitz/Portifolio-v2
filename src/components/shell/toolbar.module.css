@@ -40,6 +40,10 @@
   border-color: var(--border);
 }
 
+.execute > svg {
+  color: var(--icon-execute);
+}
+
 .explorerToggle {
   display: none;
 }

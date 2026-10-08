@@ -43,7 +43,9 @@ export const TOKEN_GROUPS = {
     "tree-expander-border",
     "tree-expander-glyph",
     "status-success-icon",
+    "status-warning-icon",
     "status-separator",
+    "icon-execute",
   ],
 } as const;
 
@@ -108,6 +110,7 @@ export const CONTRAST_PAIRS: readonly ContrastPair[] = [
   ...uiOn("selection", "bg-panel", "intellisense-bg"),
   ...uiOn("icon", "bg-window", "bg-panel", "bg-tabstrip", "bg-tab-active"),
   ...uiOn("icon-folder", "bg-panel"),
+  ...uiOn("icon-execute", "bg-window", "bg-tab-active"),
   ...uiOn("tree-expander-border", "bg-panel"),
   ...uiOn("tree-expander-glyph", "text"),
   ...uiOn(

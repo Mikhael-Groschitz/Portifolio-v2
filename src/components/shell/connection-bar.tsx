@@ -7,9 +7,11 @@ import {
   SuccessIcon,
   WarningIcon,
 } from "@/components/icons";
+import { ProfileText } from "@/components/connect/profile-text";
 import { LocaleText } from "@/components/locale/locale-text";
 import { formatCount, formatElapsed } from "@/content/format";
 import { type Localized, mapLocalized } from "@/content/locales";
+import { byProfile } from "@/content/profiles";
 import type { ConnectionText } from "@/content/types";
 import { DATABASE, SERVER } from "@/engine/catalog";
 import { useWorkspace } from "./workspace-context";
@@ -63,7 +65,11 @@ export function ConnectionBar({
         {`${SERVER.name} (${SERVER.version} RTM)`}
       </span>
       <span className={`${styles.segment} ${styles.detail}`}>
-        <LocaleText text={mapLocalized(text, (bar) => bar.login)} />
+        <ProfileText
+          text={byProfile((profile) =>
+            mapLocalized(text, (bar) => bar.login[profile]),
+          )}
+        />
       </span>
       <span className={styles.segment}>{DATABASE}</span>
       <span className={styles.segment}>{formatElapsed(elapsed)}</span>

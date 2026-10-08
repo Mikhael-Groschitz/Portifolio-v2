@@ -8,7 +8,7 @@ A versão atual continua no ar em [mgroschitz.dev](https://mgroschitz.dev) enqua
 
 ## Status
 
-Em construção. A janela do SSMS já funciona: cada tabela do Object Explorer abre o próprio script T-SQL numa aba e executa na hora. A grade mostra os dados, a aba de mensagens mostra as linhas afetadas e o horário de conclusão, e a barra amarela acompanha o resultado. Cada seção tem o seu endereço (`/about`, `/tech-stack`, `/career`, `/projects`, `/beyond-the-terminal`, `/contact` e `/resume`), e a procedure `sp_DownloadCV` entrega o currículo em PDF. Também existem a paleta de cores (`/palette`) e a versão simples (`/simple`) com o conteúdo do portfólio.
+Em construção. Na primeira visita de cada sessão aparece a tela Conectar ao Servidor: um clique em Conectar (ou um Enter) abre a janela do SSMS com a tabela da página já executada. Lá dentro, cada tabela do Object Explorer abre o próprio script T-SQL numa aba e executa na hora. A grade mostra os dados, a aba de mensagens mostra as linhas afetadas e o horário de conclusão, e a barra amarela acompanha o resultado. Cada seção tem o seu endereço (`/about`, `/tech-stack`, `/career`, `/projects`, `/beyond-the-terminal`, `/contact` e `/resume`), e a procedure `sp_DownloadCV` entrega o currículo em PDF. Também existem a paleta de cores (`/palette`) e a versão simples (`/simple`) com o conteúdo do portfólio.
 
 ## Stack
 
@@ -64,6 +64,10 @@ src/
 - A URL manda na aba ativa: abrir uma tabela muda o endereço, e voltar, avançar ou recarregar a página leva sempre à aba certa. As abas abertas não se repetem e a última nunca fecha.
 - A execução é simulada por um motor em TypeScript puro (`src/engine/execute.ts`), sem React e sem DOM. Ele normaliza o comando (maiúsculas, `;`, `GO` e comentários) e responde com as linhas do conteúdo ou com um erro no formato do SQL Server. A página de cada seção já sai do servidor com a grade preenchida, então o conteúdo está no HTML mesmo sem JavaScript.
 - F5 só executa com o foco no editor; fora dele, a tecla continua recarregando a página. O botão Executar roda o script da aba ativa.
+- A tela de conexão aparece uma vez por sessão. Um script no `<head>` lê o `sessionStorage` antes da primeira pintura e marca o `<html>`; o CSS só mostra o diálogo para quem ainda não conectou. Quem recarrega a página não vê o diálogo piscar, e sem JavaScript o conteúdo aparece direto, sem diálogo.
+- O diálogo é um overlay: o conteúdo continua no HTML, e o resto da janela fica inerte enquanto ele está aberto. Cancelar, Esc ou o X levam à versão simples.
+- Os dois perfis de autenticação, visitante e dev, mostram o mesmo conteúdo. O perfil escolhido vira o login da barra amarela e do servidor no Object Explorer.
+- Em Opções, "Usar cor personalizada" muda de verdade a cor da barra de conexão durante a sessão, com o texto em preto ou branco conforme o contraste. `Language=en` nos parâmetros adicionais troca o idioma do site ao conectar.
 - Os scripts são montados a partir do catálogo de objetos (`src/engine/catalog.ts`), o mesmo que alimenta a árvore, e coloridos pelo Shiki no build. Por cima do Shiki há um ajuste: nomes de coluna como `Role` e `Description` voltam à cor de identificador, e `AND`, `OR`, `LIKE` e a pontuação ficam cinza, como no SSMS.
 - Nada do que o visitante digita é executado como código.
 - Ícones próprios em SVG, sem marcas da Microsoft.
@@ -76,7 +80,7 @@ src/
 - [x] Janela do SSMS
 - [x] Scripts das seções e Object Explorer
 - [x] Execução das consultas
-- [ ] Tela de conexão
+- [x] Tela de conexão
 - [ ] Nova consulta com autocomplete
 - [ ] Guia para quem não conhece SQL
 - [ ] SEO e acessibilidade

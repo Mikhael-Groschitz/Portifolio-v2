@@ -1,4 +1,5 @@
 import type { Placeholder } from "./placeholder";
+import type { ByProfile } from "./profiles";
 
 export const SECTION_IDS = [
   "about",
@@ -128,8 +129,67 @@ export interface ConnectionText {
   executing: string;
   succeeded: string;
   failed: string;
-  login: string;
+  login: ByProfile<string>;
   rows: CountText;
+}
+
+export interface ConnectText {
+  title: string;
+  close: string;
+  brand: string;
+  tabs: {
+    login: string;
+    connectionProperties: string;
+    additionalParameters: string;
+  };
+  login: {
+    server: string;
+    serverType: string;
+    serverTypeValue: string;
+    serverName: string;
+    authentication: string;
+    profiles: ByProfile<string>;
+    userName: string;
+    password: string;
+    rememberPassword: string;
+    security: string;
+    encryption: string;
+    encryptionValue: string;
+    trustCertificate: string;
+    hostName: string;
+  };
+  properties: {
+    intro: string;
+    database: string;
+    network: string;
+    protocol: string;
+    defaultValue: string;
+    packetSize: string;
+    bytes: string;
+    connection: string;
+    connectionTimeout: string;
+    executionTimeout: string;
+    seconds: string;
+    customColor: string;
+    selectColor: string;
+    resetAll: string;
+  };
+  parameters: {
+    label: string;
+    hint: string;
+  };
+  buttons: {
+    connect: string;
+    connecting: string;
+    cancel: string;
+    help: string;
+    options: string;
+  };
+  help: {
+    title: string;
+    body: string[];
+    close: string;
+  };
 }
 
 export interface ShellText {
@@ -160,6 +220,7 @@ export interface ShellText {
   scripts: Record<SectionId, string[]>;
   results: ResultsText;
   connection: ConnectionText;
+  connect: ConnectText;
   status: {
     ready: string;
   };

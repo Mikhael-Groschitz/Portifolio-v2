@@ -1,8 +1,17 @@
 import type { Localized } from "@/content/locales";
+import { type ByProfile, PROFILES } from "@/content/profiles";
 
 export type TreeIcon = "server" | "folder" | "database" | "table" | "procedure";
 
-export type TreeLabel = string | Localized;
+export type TreeLabel = string | Localized | ByProfile<Localized>;
+
+export function isProfileLabel(
+  label: TreeLabel,
+): label is ByProfile<Localized> {
+  return (
+    typeof label === "object" && PROFILES.every((profile) => profile in label)
+  );
+}
 
 export interface TreeNode {
   id: string;

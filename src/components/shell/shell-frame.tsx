@@ -11,6 +11,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useConnectionStatus } from "@/components/connect/use-connection-status";
 import { COMPACT_MEDIA_QUERY } from "./breakpoints";
 import { useMediaQuery } from "./use-media-query";
 import styles from "./shell.module.css";
@@ -32,6 +33,7 @@ interface ShellFrameProps {
   explorer: ReactNode;
   workspace: ReactNode;
   statusBar: ReactNode;
+  dialog: ReactNode;
 }
 
 function focusTree(container: HTMLElement | null) {
@@ -40,17 +42,42 @@ function focusTree(container: HTMLElement | null) {
     ?.focus();
 }
 
+function focusEditor(container: HTMLElement | null) {
+  container?.querySelector<HTMLElement>("[data-editor]")?.focus();
+}
+
 export function ShellFrame({
   titleBar,
   toolbar,
   explorer,
   workspace,
   statusBar,
+  dialog,
 }: Readonly<ShellFrameProps>) {
   const compact = useMediaQuery(COMPACT_MEDIA_QUERY);
+  const connection = useConnectionStatus();
+  const blocked = connection === "pending";
   const [drawerRequested, setDrawerRequested] = useState(false);
   const explorerOpen = compact && drawerRequested;
   const explorerRef = useRef<HTMLDivElement>(null);
+  const workspaceRef = useRef<HTMLDivElement>(null);
+  const wasBlocked = useRef(false);
+
+  useEffect(() => {
+    if (blocked) {
+      wasBlocked.current = true;
+      return;
+    }
+    if (!wasBlocked.current || connection !== "connected") {
+      return;
+    }
+    wasBlocked.current = false;
+    if (compact) {
+      focusEditor(workspaceRef.current);
+    } else {
+      focusTree(explorerRef.current);
+    }
+  }, [blocked, connection, compact]);
 
   useEffect(() => {
     if (!explorerOpen) {
@@ -89,7 +116,7 @@ export function ShellFrame({
   return (
     <ShellContext value={value}>
       <div className={styles.shell}>
-        <div className={styles.chrome} inert={explorerOpen}>
+        <div className={styles.chrome} inert={explorerOpen || blocked}>
           {titleBar}
           {toolbar}
         </div>
@@ -98,6 +125,7 @@ export function ShellFrame({
           ref={explorerRef}
           className={styles.explorer}
           data-open={explorerOpen}
+          inert={blocked}
           onKeyDown={handleExplorerKeyDown}
         >
           {explorer}
@@ -107,12 +135,17 @@ export function ShellFrame({
           hidden={!explorerOpen}
           onClick={closeExplorer}
         />
-        <div className={styles.workspace} inert={explorerOpen}>
+        <div
+          ref={workspaceRef}
+          className={styles.workspace}
+          inert={explorerOpen || blocked}
+        >
           {workspace}
         </div>
-        <div className={styles.status} inert={explorerOpen}>
+        <div className={styles.status} inert={explorerOpen || blocked}>
           {statusBar}
         </div>
+        {dialog}
       </div>
     </ShellContext>
   );

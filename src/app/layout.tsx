@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { CONNECTION_SCRIPT } from "@/components/connect/connection-runtime";
 import { LanguageProvider } from "@/components/locale/language-context";
 import { LOCALE_SCRIPT } from "@/components/locale/locale-runtime";
 import { getTexts } from "@/content";
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang={DEFAULT_LOCALE} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: LOCALE_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: CONNECTION_SCRIPT }} />
       </head>
       <body>
         <LanguageProvider>{children}</LanguageProvider>

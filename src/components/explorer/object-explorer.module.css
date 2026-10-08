@@ -65,6 +65,10 @@
   padding-block: 2px 8px;
 }
 
+:global(html[data-connection="pending"]) .treeScroll {
+  visibility: hidden;
+}
+
 .tree,
 .group {
   margin: 0;

@@ -49,7 +49,16 @@
   display: none;
 }
 
+:global(html[data-connection="pending"]) .workspace {
+  visibility: hidden;
+}
+
 @media (max-width: 767px) {
+  :global(html[data-connection="pending"]) .shell {
+    height: 100dvh;
+    overflow: hidden;
+  }
+
   .shell {
     display: flex;
     flex-direction: column;

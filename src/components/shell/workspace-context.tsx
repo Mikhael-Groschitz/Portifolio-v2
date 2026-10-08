@@ -35,6 +35,7 @@ interface WorkspaceContextValue {
   openSection: (section: SectionId) => void;
   runSection: (section: SectionId) => void;
   closeSection: (section: SectionId) => void;
+  connect: () => void;
 }
 
 const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
@@ -135,6 +136,18 @@ export function WorkspaceProvider({
     [activeSection, router, tabs],
   );
 
+  const connect = useCallback(() => {
+    runIds.current += 1;
+    dispatch({
+      type: "connect",
+      section: activeSection,
+      run: connectionRun(executeSection(activeSection), {
+        id: runIds.current,
+        completedAt: new Date(),
+      }),
+    });
+  }, [activeSection]);
+
   const value = useMemo(
     () => ({
       tabs,
@@ -144,6 +157,7 @@ export function WorkspaceProvider({
       openSection,
       runSection,
       closeSection,
+      connect,
     }),
     [
       tabs,
@@ -153,6 +167,7 @@ export function WorkspaceProvider({
       openSection,
       runSection,
       closeSection,
+      connect,
     ],
   );
 

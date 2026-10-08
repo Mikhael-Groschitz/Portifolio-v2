@@ -24,6 +24,13 @@ describe("explorerNodes", () => {
     );
   });
 
+  it("names the server with the login of each profile", () => {
+    expect(nodes[0].label).toMatchObject({
+      visitor: { "pt-BR": expect.stringMatching(/ - visitante\)$/) },
+      dev: { en: expect.stringMatching(/ - dev\)$/) },
+    });
+  });
+
   it("nests tables and procedures under the Portfolio database", () => {
     expect(expandableIds(nodes)).toEqual([
       "server",

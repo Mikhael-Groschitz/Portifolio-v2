@@ -27,17 +27,22 @@ export type WorkspaceAction =
   | { type: "open"; section: SectionId; active: SectionId }
   | { type: "close"; section: SectionId; active: SectionId }
   | { type: "start"; section: SectionId; id: number }
-  | { type: "finish"; section: SectionId; run: FinishedRun };
+  | { type: "finish"; section: SectionId; run: FinishedRun }
+  | { type: "connect"; section: SectionId; run: FinishedRun };
 
 export function connectionRun(
   outcomes: Localized<ExecutionOutcome>,
+  {
+    id = 0,
+    completedAt = null,
+  }: { id?: number; completedAt?: Date | null } = {},
 ): FinishedRun {
   return {
-    id: 0,
+    id,
     status: "done",
     origin: "connection",
     outcomes,
-    completedAt: null,
+    completedAt,
     elapsedMs: 0,
   };
 }
@@ -128,6 +133,11 @@ export function workspaceReducer(
       }
       return {
         ...state,
+        runs: { ...state.runs, [action.section]: action.run },
+      };
+    case "connect":
+      return {
+        tabs: withActive(state.tabs, action.section),
         runs: { ...state.runs, [action.section]: action.run },
       };
   }

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { Localized } from "@/content/locales";
 import type { ExecutionOutcome } from "@/engine/execute";
 import {
+  connectionRun,
   initialWorkspace,
   neighborAfterClose,
   userRun,
@@ -122,6 +123,22 @@ describe("runs", () => {
       run: userRun(1, success, moment, 1),
     });
     expect(stale.runs.about).toEqual({ id: 2, status: "executing" });
+  });
+
+  it("runs the current section again when the visitor connects", () => {
+    const connected = workspaceReducer(initialWorkspace("about", success), {
+      type: "connect",
+      section: "career",
+      run: connectionRun(success, { id: 3, completedAt: moment }),
+    });
+    expect(connected.tabs).toEqual(["about", "career"]);
+    expect(connected.runs.career).toMatchObject({
+      id: 3,
+      status: "done",
+      origin: "connection",
+      completedAt: moment,
+    });
+    expect(connected.runs.about).toMatchObject({ id: 0 });
   });
 });
 

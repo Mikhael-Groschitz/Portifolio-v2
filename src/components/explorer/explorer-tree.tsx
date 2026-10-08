@@ -16,12 +16,15 @@ import {
   ServerIcon,
   TableIcon,
 } from "@/components/icons";
+import { ProfileText } from "@/components/connect/profile-text";
 import { LocaleText } from "@/components/locale/locale-text";
 import {
   type TreeIcon,
+  type TreeLabel,
   type TreeNode,
   expandableIds,
   isExpandable,
+  isProfileLabel,
   moveForKey,
   visibleNodes,
 } from "./tree-model";
@@ -36,6 +39,17 @@ const NODE_ICONS: Record<TreeIcon, ReactNode> = {
   table: <TableIcon />,
   procedure: <ProcedureIcon />,
 };
+
+function NodeLabel({ label }: Readonly<{ label: TreeLabel }>) {
+  if (typeof label === "string") {
+    return label;
+  }
+  return isProfileLabel(label) ? (
+    <ProfileText text={label} />
+  ) : (
+    <LocaleText text={label} />
+  );
+}
 
 interface ExplorerTreeProps {
   nodes: readonly TreeNode[];
@@ -147,11 +161,7 @@ export function ExplorerTree({
           </span>
           <span className={styles.nodeIcon}>{NODE_ICONS[node.icon]}</span>
           <span className={styles.label}>
-            {typeof node.label === "string" ? (
-              node.label
-            ) : (
-              <LocaleText text={node.label} />
-            )}
+            <NodeLabel label={node.label} />
           </span>
         </div>
         {isOpen && (

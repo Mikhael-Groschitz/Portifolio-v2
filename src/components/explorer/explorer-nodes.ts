@@ -1,5 +1,6 @@
 import { localize } from "@/content";
 import { type Localized, mapLocalized } from "@/content/locales";
+import { byProfile } from "@/content/profiles";
 import {
   CATALOG,
   type CatalogObjectKind,
@@ -29,10 +30,12 @@ export function explorerNodes(): TreeNode[] {
     {
       id: "server",
       icon: "server",
-      label: mapLocalized(
-        login,
-        (user) =>
-          `${SERVER.name} (${SERVER.product} ${SERVER.version} - ${user})`,
+      label: byProfile((profile) =>
+        mapLocalized(
+          login,
+          (users) =>
+            `${SERVER.name} (${SERVER.product} ${SERVER.version} - ${users[profile]})`,
+        ),
       ),
       children: [
         folder(

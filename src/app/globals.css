@@ -31,6 +31,11 @@ html[data-locale="en"] [data-locale-block="pt-BR"] {
   display: none;
 }
 
+html:not([data-profile="dev"]) [data-profile-block="dev"],
+html[data-profile="dev"] [data-profile-block="visitor"] {
+  display: none;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;

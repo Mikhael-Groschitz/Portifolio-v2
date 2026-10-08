@@ -19,11 +19,16 @@ export const LOCALE_SCRIPT = `(function(){try{var locales=${JSON.stringify(LOCAL
 
 type LocaleRoot = Pick<HTMLElement, "lang" | "getAttribute" | "setAttribute">;
 
+export function matchLocale(tag: string): Locale | null {
+  const index = LOCALE_SUBTAGS.indexOf(primarySubtag(tag.trim()));
+  return index === -1 ? null : LOCALES[index];
+}
+
 export function detectLocale(preferred: readonly string[]): Locale {
   for (const tag of preferred) {
-    const index = LOCALE_SUBTAGS.indexOf(primarySubtag(tag));
-    if (index !== -1) {
-      return LOCALES[index];
+    const locale = matchLocale(tag);
+    if (locale) {
+      return locale;
     }
   }
   return FALLBACK_LOCALE;

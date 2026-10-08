@@ -7,6 +7,7 @@ import {
   LOCALE_STORAGE_KEY,
   applyLocale,
   detectLocale,
+  matchLocale,
   nextLocale,
   readAppliedLocale,
   readStoredLocale,
@@ -102,6 +103,13 @@ describe("initial language", () => {
   it("picks the first supported language from the system list", () => {
     expect(detectLocale(["de-DE", "en-US", "pt-BR"])).toBe("en");
     expect(detectLocale(["PT-br"])).toBe("pt-BR");
+  });
+
+  it("matches a single language tag or nothing", () => {
+    expect(matchLocale(" en-GB ")).toBe("en");
+    expect(matchLocale("pt")).toBe("pt-BR");
+    expect(matchLocale("fr-FR")).toBeNull();
+    expect(matchLocale("")).toBeNull();
   });
 });
 

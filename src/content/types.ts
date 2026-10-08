@@ -70,6 +70,81 @@ export interface SimpleVersionText {
   fullVersion: string;
 }
 
+export type MenuId = "file" | "edit" | "view" | "tools" | "window" | "help";
+
+export type MenuItemId =
+  | "newQuery"
+  | "openFile"
+  | "save"
+  | "undo"
+  | "redo"
+  | "cut"
+  | "copy"
+  | "paste"
+  | "objectExplorer"
+  | "fullScreen"
+  | "language"
+  | "options"
+  | "closeAllDocuments"
+  | "resetWindowLayout"
+  | "cheatsheet"
+  | "tour"
+  | "simpleVersion";
+
+export interface CountText {
+  one: string;
+  other: string;
+}
+
+export interface MenuText {
+  label: string;
+  more: string;
+  menus: Record<MenuId, string>;
+  items: Record<MenuItemId, string>;
+}
+
+export interface ShellText {
+  windowTitle: string;
+  languageName: string;
+  menu: MenuText;
+  toolbar: {
+    newQuery: string;
+    databases: string;
+    execute: string;
+    simpleVersion: string;
+  };
+  explorer: {
+    title: string;
+    connect: string;
+    close: string;
+    databases: string;
+    tables: string;
+    programmability: string;
+    storedProcedures: string;
+  };
+  editor: {
+    tabsLabel: string;
+    placeholder: string[];
+    noIssues: string;
+    line: string;
+    column: string;
+  };
+  results: {
+    results: string;
+    messages: string;
+    rowNumber: string;
+    rowsAffected: CountText;
+  };
+  connection: {
+    connected: string;
+    login: string;
+    rows: CountText;
+  };
+  status: {
+    ready: string;
+  };
+}
+
 export interface Texts {
   about: AboutRow;
   techStack: TechStackRow[];
@@ -78,6 +153,7 @@ export interface Texts {
   contact: { intro: string; channels: ContactRow[] };
   resume: ResumeRow;
   simpleVersion: SimpleVersionText;
+  shell: ShellText;
 }
 
 export interface Tables {

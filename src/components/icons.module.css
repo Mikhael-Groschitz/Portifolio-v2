@@ -1,0 +1,82 @@
+.icon {
+  display: block;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+}
+
+.solid {
+  fill: currentColor;
+  stroke: none;
+}
+
+.app {
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.appInk {
+  stroke: var(--text);
+}
+
+.appCode {
+  stroke: var(--focus-ring);
+}
+
+.folder {
+  fill: var(--icon-folder);
+  stroke: none;
+}
+
+.expanderBox {
+  fill: var(--text);
+  stroke: var(--tree-expander-border);
+}
+
+.expanderGlyph {
+  stroke: var(--tree-expander-glyph);
+}
+
+.badge {
+  fill: var(--text-success);
+  stroke: none;
+}
+
+.badgeMark {
+  fill: var(--bg-panel);
+  stroke: none;
+}
+
+.danger {
+  stroke: var(--text-error);
+}
+
+.check {
+  fill: var(--text-success);
+  stroke: none;
+}
+
+.checkMark {
+  stroke: var(--bg-tabstrip);
+  stroke-width: 1.5;
+}
+
+.statusInk {
+  fill: var(--text-on-status);
+  stroke: none;
+}
+
+.statusInkLine {
+  stroke: var(--text-on-status);
+}
+
+.statusBadge {
+  fill: var(--status-success-icon);
+  stroke: none;
+}
+
+.statusBadgeMark {
+  stroke: var(--text);
+  stroke-width: 1.2;
+}

@@ -1,0 +1,158 @@
+.panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid var(--border);
+  border-block-start: 2px solid var(--accent);
+  background: var(--bg-panel);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  padding-inline: 8px 6px;
+}
+
+.title {
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.grip {
+  flex: 1;
+  height: 5px;
+  background-image: radial-gradient(var(--text-disabled) 1px, transparent 1px);
+  background-size: 4px 4px;
+}
+
+.headerIcons {
+  display: flex;
+  gap: 4px;
+  color: var(--icon);
+}
+
+.closeButton {
+  display: none;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  padding-inline: 8px;
+  color: var(--icon);
+}
+
+.connect {
+  display: flex;
+  align-items: center;
+  margin-inline-end: 4px;
+  color: var(--text-menu);
+}
+
+.disabledIcon {
+  color: var(--text-disabled);
+}
+
+.treeScroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding-block: 2px 8px;
+}
+
+.tree,
+.group {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  outline: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: max-content;
+  height: 24px;
+  padding-inline-end: 12px;
+  color: var(--text);
+  white-space: nowrap;
+  cursor: default;
+}
+
+.row:hover {
+  background: var(--bg-tab-active);
+}
+
+.item[aria-selected="true"] > .row {
+  background: var(--selection);
+  color: var(--text-on-selection);
+}
+
+.item:focus-visible > .row {
+  outline: 1px solid var(--focus-ring);
+  outline-offset: -1px;
+}
+
+.item[aria-selected="true"]:focus-visible > .row {
+  outline-color: var(--text-on-selection);
+}
+
+.expander {
+  display: flex;
+  flex: none;
+  width: 16px;
+}
+
+.nodeIcon {
+  display: flex;
+  color: var(--icon);
+}
+
+.item[aria-selected="true"] > .row .nodeIcon {
+  color: var(--text-on-selection);
+}
+
+@media (max-width: 767px) {
+  .panel {
+    height: 100%;
+    border: 0;
+    border-block-start: 2px solid var(--accent);
+  }
+
+  .header {
+    height: 44px;
+  }
+
+  .headerIcons {
+    display: none;
+  }
+
+  .closeButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--icon);
+  }
+
+  .closeButton:hover {
+    background: var(--bg-tab-active);
+  }
+
+  .row {
+    height: 36px;
+  }
+}

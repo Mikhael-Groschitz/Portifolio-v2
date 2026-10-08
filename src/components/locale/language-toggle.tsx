@@ -5,13 +5,21 @@ import { useLanguage } from "./language-context";
 import { nextLocale } from "./locale-runtime";
 import styles from "./language-toggle.module.css";
 
-export function LanguageToggle({ labels }: { labels: Localized }) {
+interface LanguageToggleProps {
+  labels: Localized;
+  className?: string;
+}
+
+export function LanguageToggle({
+  labels,
+  className = styles.toggle,
+}: Readonly<LanguageToggleProps>) {
   const { locale, setLocale } = useLanguage();
 
   return (
     <button
       type="button"
-      className={styles.toggle}
+      className={className}
       onClick={() => setLocale(nextLocale(locale))}
     >
       {LOCALES.map((option) => (

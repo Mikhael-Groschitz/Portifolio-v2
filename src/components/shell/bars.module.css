@@ -1,0 +1,47 @@
+.connectionBar {
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  background: var(--status-connected);
+  color: var(--text-on-status);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.connectionStatus {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  margin-inline-end: auto;
+  padding-inline: 6px 12px;
+}
+
+.segment {
+  padding-inline: 8px;
+  border-inline-start: 1px solid var(--status-separator);
+}
+
+.statusBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 26px;
+  padding-inline: 10px;
+  background: var(--status-ready);
+  color: var(--text);
+}
+
+@media (max-width: 767px) {
+  .detail {
+    display: none;
+  }
+
+  .connectionStatus {
+    padding-inline-end: 8px;
+  }
+
+  .segment {
+    padding-inline: 6px;
+  }
+}

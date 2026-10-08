@@ -1,5 +1,10 @@
 import { texts } from "./globals";
-import { DEFAULT_LOCALE, type Locale } from "./locales";
+import {
+  DEFAULT_LOCALE,
+  type Locale,
+  type Localized,
+  mapLocalized,
+} from "./locales";
 import { isPlaceholder } from "./placeholder";
 import type { CareerDate, SectionId, Tables, Texts } from "./types";
 
@@ -25,6 +30,10 @@ const readers: {
 
 export function getTexts(locale: Locale = DEFAULT_LOCALE): Texts {
   return texts[locale];
+}
+
+export function localize<T>(pick: (localeTexts: Texts) => T): Localized<T> {
+  return mapLocalized(texts, pick);
 }
 
 export function getTable<K extends SectionId>(

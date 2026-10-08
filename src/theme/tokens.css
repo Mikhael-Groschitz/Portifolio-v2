@@ -51,6 +51,12 @@
   --text-on-selection: #ffffff;
   --grid-row-selected-text: #000000;
   --focus-ring: #8e81ed;
+  --icon: #c3c3c3;
+  --icon-folder: #dcb67a;
+  --tree-expander-border: #919191;
+  --tree-expander-glyph: #4b63a7;
+  --status-success-icon: #339933;
+  --status-separator: #bdbdbd;
 
   /* Fonts: system stacks only, nothing embedded */
   --font-code: Consolas, "Cascadia Mono", ui-monospace, monospace;

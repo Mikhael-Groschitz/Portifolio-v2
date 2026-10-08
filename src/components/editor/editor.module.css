@@ -7,36 +7,72 @@
 
 .tabs {
   display: flex;
+  gap: 1px;
   min-width: 0;
   overflow-x: auto;
 }
 
 .tab {
   display: flex;
+  flex: none;
   align-items: center;
-  gap: 10px;
   height: 28px;
-  padding-inline: 10px 6px;
-  border-block-start: 2px solid var(--accent);
-  background: var(--bg-tab-active);
-  color: var(--text);
-  font-weight: 600;
+  padding-inline-end: 6px;
+  border-block-start: 2px solid transparent;
+  background: var(--bg-tabstrip);
+  color: var(--text-muted);
   white-space: nowrap;
 }
 
-.tab:focus-visible {
-  outline-offset: -2px;
+.tab:hover {
+  color: var(--text);
 }
 
-.tabTitle {
-  overflow: hidden;
-  text-overflow: ellipsis;
+.activeTab {
+  border-block-start-color: var(--accent);
+  background: var(--bg-tab-active);
+  color: var(--text);
+}
+
+.tabButton {
+  align-self: stretch;
+  padding-inline: 10px 8px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: default;
+}
+
+.activeTab .tabButton {
+  font-weight: 600;
+}
+
+.tabButton:focus-visible {
+  outline-offset: -2px;
 }
 
 .tabIcons {
   display: flex;
+  align-items: center;
   gap: 4px;
   color: var(--icon);
+}
+
+.closeTab {
+  display: flex;
+  border-radius: 2px;
+  visibility: hidden;
+  cursor: default;
+}
+
+.activeTab .closeTab,
+.tab:hover .closeTab {
+  visibility: visible;
+}
+
+.closeTab:hover {
+  background: var(--bg-input);
 }
 
 .stripIcons {
@@ -46,9 +82,24 @@
   color: var(--icon);
 }
 
+.panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.panel > [data-locale-block] {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
 .editor {
   display: flex;
   flex: 1;
+  min-width: 0;
   min-height: 96px;
   overflow: auto;
   background: var(--bg-editor);
@@ -57,41 +108,38 @@
   line-height: 20px;
 }
 
-.gutter {
-  display: flex;
-  flex: none;
-  flex-direction: column;
-  width: 52px;
+.editor:focus-visible {
+  outline-offset: -2px;
+}
+
+.code {
+  flex: 1;
+  min-width: max-content;
+  margin: 0;
   padding-block: 6px;
+  font: inherit;
+}
+
+.line {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  min-height: 20px;
+}
+
+.lineNumber {
   padding-inline-end: 14px;
   color: var(--text-muted);
   text-align: end;
   user-select: none;
 }
 
-.code {
-  flex: 1;
-  min-width: max-content;
-  padding-block: 6px;
-}
-
-.pre {
-  margin: 0;
-  font: inherit;
-}
-
-.line {
-  display: block;
+.lineText {
   padding-inline: 6px 24px;
   white-space: pre;
 }
 
-.currentLine {
+.currentLine .lineText {
   box-shadow: inset 0 0 0 1px var(--border);
-}
-
-.comment {
-  color: var(--syntax-comment);
 }
 
 .editorBar {
@@ -130,9 +178,30 @@
 }
 
 @media (max-width: 767px) {
-  .editor {
+  .panel > [data-locale-block] {
     flex: none;
+  }
+
+  .editor {
     min-height: 0;
+  }
+
+  .code {
+    min-width: 0;
+  }
+
+  .line {
+    grid-template-columns: 36px 1fr;
+  }
+
+  .lineNumber {
+    padding-inline-end: 8px;
+  }
+
+  .lineText {
+    padding-inline-end: 8px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
   }
 
   .zoom {

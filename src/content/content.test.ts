@@ -52,6 +52,7 @@ function sharedFacts(locale: Locale) {
       demoUrl,
       image,
     })),
+    traits: texts.beyondTheTerminal.map(({ trait }) => trait),
     contact: texts.contact.channels.map(({ value, url }) => ({ value, url })),
   };
 }
@@ -153,10 +154,14 @@ describe("getTable", () => {
     }
   });
 
-  it("keeps project names and contact channels unique", () => {
+  it("keeps project names, traits and contact channels unique", () => {
     for (const locale of LOCALES) {
       const names = getTable("projects", locale).map((project) => project.name);
       expect(new Set(names).size).toBe(names.length);
+      const traits = getTable("beyond-the-terminal", locale).map(
+        (row) => row.trait,
+      );
+      expect(new Set(traits).size).toBe(traits.length);
       const channels = getTable("contact", locale).map((item) => item.channel);
       expect(new Set(channels).size).toBe(channels.length);
     }

@@ -9,13 +9,6 @@
   background: var(--bg-editor);
 }
 
-.panel {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-height: 0;
-}
-
 @media (max-width: 767px) {
   .document {
     border-inline: 0;

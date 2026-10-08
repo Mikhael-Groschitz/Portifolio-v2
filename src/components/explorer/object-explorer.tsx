@@ -14,7 +14,7 @@ import { localize } from "@/content";
 import { mapLocalized } from "@/content/locales";
 import { ExplorerCloseButton } from "./explorer-close-button";
 import { explorerNodes } from "./explorer-nodes";
-import { ExplorerTree } from "./explorer-tree";
+import { ObjectExplorerTree } from "./object-explorer-tree";
 import styles from "./object-explorer.module.css";
 
 const TITLE_ID = "object-explorer-title";
@@ -53,11 +53,7 @@ export function ObjectExplorer() {
         <ActivityIcon />
       </div>
       <div className={styles.treeScroll}>
-        <ExplorerTree
-          nodes={explorerNodes()}
-          labelledBy={TITLE_ID}
-          defaultSelectedId="about"
-        />
+        <ObjectExplorerTree nodes={explorerNodes()} labelledBy={TITLE_ID} />
       </div>
     </nav>
   );

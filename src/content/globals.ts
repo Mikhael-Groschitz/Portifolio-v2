@@ -107,6 +107,22 @@ export const texts: Record<Locale, Texts> = {
         image: "/projects/project-token-forge.png",
       },
     ],
+    beyondTheTerminal: [
+      {
+        trait: "Builder",
+        description:
+          "Unindo hobbies e código, desenvolvendo aplicações e projetos paralelos para a comunidade de jogos.",
+      },
+      {
+        trait: "Homelabber",
+        description: "Construindo servidores caseiros e redes internas.",
+      },
+      {
+        trait: "Hobbyist",
+        description:
+          "Jogador periódico de Magic: The Gathering e colecionador de boardgame.",
+      },
+    ],
     contact: {
       intro:
         "Tem um desafio de dados complexo, uma vaga para Engenharia/Análise de Dados Pleno, ou quer conversar sobre arquitetura e performance?",
@@ -152,6 +168,7 @@ export const texts: Record<Locale, Texts> = {
         "tech-stack": "Tech stack",
         career: "Carreira",
         projects: "Projetos",
+        "beyond-the-terminal": "Além do terminal",
         contact: "Contato",
         resume: "Currículo",
       },
@@ -215,13 +232,39 @@ export const texts: Record<Locale, Texts> = {
       },
       editor: {
         tabsLabel: "Scripts abertos",
-        placeholder: [
-          "Oi! Este é o editor, onde os scripts das tabelas vão aparecer.",
-          "O resultado da tabela About já está logo abaixo, na grade.",
-        ],
         noIssues: "Nenhum problema encontrado",
         line: "Ln",
         column: "Car",
+      },
+      scripts: {
+        about: [
+          "Oi! Estes são os dados da tabela About: quem eu sou, em poucas linhas.",
+          "Quer continuar passeando? É só clicar em outra tabela na barra da esquerda.",
+        ],
+        "tech-stack": [
+          "Aqui estão as tecnologias com que eu trabalho, agrupadas por categoria.",
+          "A ordem é proposital: começa nas linguagens e termina na modelagem.",
+        ],
+        career: [
+          "Esta é a minha trajetória, do trabalho mais recente para o mais antigo.",
+          "Prefere em PDF? A procedure sp_DownloadCV, em Programação, entrega o currículo.",
+        ],
+        projects: [
+          "Estes são projetos que eu construí por conta própria.",
+          "Os links levam ao código no GitHub e, quando existe, à demonstração.",
+        ],
+        "beyond-the-terminal": [
+          "Nem tudo é dado: um pouco do que eu faço longe do trabalho.",
+          "Quer conversar sobre isso também? A tabela Contact tem os meus canais.",
+        ],
+        contact: [
+          "Quer conversar? Estes são os meus canais de contato.",
+          "Escolha o que for mais prático para você.",
+        ],
+        resume: [
+          "Esta procedure entrega o meu currículo em PDF, no idioma do site.",
+          "O link para baixar aparece no resultado.",
+        ],
       },
       results: {
         results: "Resultados",
@@ -347,6 +390,21 @@ export const texts: Record<Locale, Texts> = {
         image: "/projects/project-token-forge.png",
       },
     ],
+    beyondTheTerminal: [
+      {
+        trait: "Builder",
+        description:
+          "Bridging hobbies and code through side projects and apps for the gaming community.",
+      },
+      {
+        trait: "Homelabber",
+        description: "Building and breaking servers.",
+      },
+      {
+        trait: "Hobbyist",
+        description: "Periodic Magic: The Gathering player.",
+      },
+    ],
     contact: {
       intro:
         "Have a complex data challenge, a mid-level Data Engineer/Analyst opening, or want to talk about architecture and performance?",
@@ -392,6 +450,7 @@ export const texts: Record<Locale, Texts> = {
         "tech-stack": "Tech stack",
         career: "Career",
         projects: "Projects",
+        "beyond-the-terminal": "Beyond the terminal",
         contact: "Contact",
         resume: "Resume",
       },
@@ -455,13 +514,39 @@ export const texts: Record<Locale, Texts> = {
       },
       editor: {
         tabsLabel: "Open scripts",
-        placeholder: [
-          "Hi! This is the editor, where the table scripts will show up.",
-          "The About table result is already right below, in the grid.",
-        ],
         noIssues: "No issues found",
         line: "Ln",
         column: "Ch",
+      },
+      scripts: {
+        about: [
+          "Hi! This is the About table: who I am, in a few lines.",
+          "Want to keep exploring? Just click another table in the left panel.",
+        ],
+        "tech-stack": [
+          "Here are the technologies I work with, grouped by category.",
+          "The order is on purpose: it starts with languages and ends with modeling.",
+        ],
+        career: [
+          "This is my career path, from the most recent job to the oldest.",
+          "Prefer a PDF? The sp_DownloadCV procedure, under Programmability, has my resume.",
+        ],
+        projects: [
+          "These are projects I built on my own.",
+          "The links lead to the code on GitHub and, when there is one, to the demo.",
+        ],
+        "beyond-the-terminal": [
+          "Not everything is data: a bit of what I do away from work.",
+          "Want to chat about it too? The Contact table has my channels.",
+        ],
+        contact: [
+          "Want to talk? These are my contact channels.",
+          "Pick whichever is most convenient for you.",
+        ],
+        resume: [
+          "This procedure hands over my resume as a PDF, in the site's language.",
+          "The download link shows up in the result.",
+        ],
       },
       results: {
         results: "Results",

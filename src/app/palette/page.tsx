@@ -1,9 +1,9 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import type { Metadata } from "next";
-import { codeToTokens } from "shiki";
+import { highlightTsql } from "@/components/editor/highlight";
+import { catalogIdentifiers } from "@/engine/catalog";
 import { contrastRatio } from "@/theme/contrast";
-import { ssmsDarkTheme } from "@/theme/shiki-theme";
 import {
   CONTRAST_PAIRS,
   TOKEN_GROUPS,
@@ -45,10 +45,7 @@ EXEC dbo.sp_DownloadCV @Language = N'pt-BR', @Retries = 3;`;
 const tokenValues = parseTokens(
   readFileSync(path.join(process.cwd(), "src/theme/tokens.css"), "utf8"),
 );
-const { tokens: sqlLines } = await codeToTokens(SAMPLE_SQL, {
-  lang: "sql",
-  theme: ssmsDarkTheme,
-});
+const sqlLines = await highlightTsql(SAMPLE_SQL, catalogIdentifiers());
 
 const ratioFormat = new Intl.NumberFormat("pt-BR", {
   minimumFractionDigits: 2,

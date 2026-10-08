@@ -8,7 +8,7 @@ A versão atual continua no ar em [mgroschitz.dev](https://mgroschitz.dev) enqua
 
 ## Status
 
-Em construção. A página inicial já mostra a janela do SSMS (menus, toolbar, Object Explorer, editor, resultados e barras de status) com dados fixos. Também existem a paleta de cores (`/palette`) e a versão simples (`/simple`) com o conteúdo do portfólio.
+Em construção. A janela do SSMS já funciona como navegação: cada tabela do Object Explorer abre o próprio script T-SQL numa aba, e cada seção tem o seu endereço (`/about`, `/tech-stack`, `/career`, `/projects`, `/beyond-the-terminal`, `/contact` e `/resume`). As consultas ainda não executam. Também existem a paleta de cores (`/palette`) e a versão simples (`/simple`) com o conteúdo do portfólio.
 
 ## Stack
 
@@ -61,6 +61,8 @@ src/
 - Os menus abrem como no SSMS. O que já tem função no site funciona (Exibir > Pesquisador de Objetos, Ferramentas > Idioma, Ajuda > Versão simples) e o resto aparece esmaecido. Tudo funciona pelo teclado.
 - No celular, o Object Explorer vira uma gaveta lateral e os menus menos usados se recolhem em um botão; a Ajuda continua à vista.
 - O estado da interface usa só recursos do React (Context e `useReducer`), sem biblioteca extra.
+- A URL manda na aba ativa: abrir uma tabela muda o endereço, e voltar, avançar ou recarregar a página leva sempre à aba certa. As abas abertas não se repetem e a última nunca fecha.
+- Os scripts são montados a partir do catálogo de objetos (`src/engine/catalog.ts`), o mesmo que alimenta a árvore, e coloridos pelo Shiki no build. Por cima do Shiki há um ajuste: nomes de coluna como `Role` e `Description` voltam à cor de identificador, e `AND`, `OR`, `LIKE` e a pontuação ficam cinza, como no SSMS.
 - Nada do que o visitante digita é executado como código.
 - Ícones próprios em SVG, sem marcas da Microsoft.
 - Commits seguem o padrão Conventional Commits.
@@ -70,7 +72,7 @@ src/
 - [x] Base do projeto e paleta de cores
 - [x] Conteúdo e versão simples
 - [x] Janela do SSMS
-- [ ] Scripts das seções e Object Explorer
+- [x] Scripts das seções e Object Explorer
 - [ ] Execução das consultas
 - [ ] Tela de conexão
 - [ ] Nova consulta com autocomplete

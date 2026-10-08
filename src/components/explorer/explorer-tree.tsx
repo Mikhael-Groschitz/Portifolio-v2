@@ -40,24 +40,29 @@ const NODE_ICONS: Record<TreeIcon, ReactNode> = {
 interface ExplorerTreeProps {
   nodes: readonly TreeNode[];
   labelledBy: string;
-  defaultSelectedId: string;
+  selectedId: string;
+  onActivate: (id: string) => void;
 }
 
 export function ExplorerTree({
   nodes,
   labelledBy,
-  defaultSelectedId,
+  selectedId,
+  onActivate,
 }: Readonly<ExplorerTreeProps>) {
   const [expanded, setExpanded] = useState<ReadonlySet<string>>(
     () => new Set(expandableIds(nodes)),
   );
-  const [selectedId, setSelectedId] = useState(defaultSelectedId);
-  const [focusedId, setFocusedId] = useState(defaultSelectedId);
+  const [focusedId, setFocusedId] = useState<string | null>(null);
   const itemRefs = useRef(new Map<string, HTMLLIElement>());
   const visible = useMemo(
     () => visibleNodes(nodes, expanded),
     [nodes, expanded],
   );
+  const tabStopId =
+    [focusedId, selectedId].find((id) =>
+      visible.some((node) => node.id === id),
+    ) ?? visible[0]?.id;
 
   function focusNode(id: string) {
     setFocusedId(id);
@@ -73,16 +78,16 @@ export function ExplorerTree({
     const focusStillVisible = visibleNodes(nodes, next).some(
       (node) => node.id === focusedId,
     );
-    if (!focusStillVisible) {
+    if (focusedId !== null && !focusStillVisible) {
       focusNode(id);
     }
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLUListElement>) {
-    if (event.altKey || event.ctrlKey || event.metaKey) {
+    if (event.altKey || event.ctrlKey || event.metaKey || !tabStopId) {
       return;
     }
-    const move = moveForKey(event.key, visible, focusedId);
+    const move = moveForKey(event.key, visible, focusedId ?? tabStopId);
     if (!move) {
       return;
     }
@@ -92,7 +97,7 @@ export function ExplorerTree({
     } else if (move.type === "toggle") {
       toggle(move.id);
     } else {
-      setSelectedId(move.id);
+      onActivate(move.id);
     }
   }
 
@@ -100,6 +105,12 @@ export function ExplorerTree({
     const { nodeId } = (event.target as HTMLElement).dataset;
     if (nodeId) {
       setFocusedId(nodeId);
+    }
+  }
+
+  function handleBlur(event: FocusEvent<HTMLUListElement>) {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      setFocusedId(null);
     }
   }
 
@@ -123,15 +134,13 @@ export function ExplorerTree({
         aria-level={level}
         aria-expanded={expandable ? isOpen : undefined}
         aria-selected={expandable ? undefined : node.id === selectedId}
-        tabIndex={node.id === focusedId ? 0 : -1}
+        tabIndex={node.id === tabStopId ? 0 : -1}
         className={styles.item}
       >
         <div
           className={styles.row}
           style={{ paddingInlineStart: (level - 1) * INDENT + 2 }}
-          onClick={() =>
-            expandable ? toggle(node.id) : setSelectedId(node.id)
-          }
+          onClick={() => (expandable ? toggle(node.id) : onActivate(node.id))}
         >
           <span className={styles.expander}>
             {expandable && <ExpanderIcon expanded={isOpen} />}
@@ -161,6 +170,7 @@ export function ExplorerTree({
       className={styles.tree}
       onKeyDown={handleKeyDown}
       onFocus={handleFocus}
+      onBlur={handleBlur}
     >
       {nodes.map((node) => renderNode(node, 1))}
     </ul>

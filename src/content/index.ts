@@ -24,6 +24,7 @@ const readers: {
       ),
     ),
   projects: (localeTexts) => localeTexts.projects,
+  "beyond-the-terminal": (localeTexts) => localeTexts.beyondTheTerminal,
   contact: (localeTexts) => localeTexts.contact.channels,
   resume: (localeTexts) => [localeTexts.resume],
 };

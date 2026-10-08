@@ -5,11 +5,16 @@ export const SECTION_IDS = [
   "tech-stack",
   "career",
   "projects",
+  "beyond-the-terminal",
   "contact",
   "resume",
 ] as const;
 
 export type SectionId = (typeof SECTION_IDS)[number];
+
+export function isSectionId(value: unknown): value is SectionId {
+  return SECTION_IDS.some((id) => id === value);
+}
 
 export type YearMonth = `${number}-${number}`;
 
@@ -42,6 +47,11 @@ export interface ProjectRow {
   repoUrl: string | null;
   demoUrl: string | null;
   image: string | null;
+}
+
+export interface BeyondTheTerminalRow {
+  trait: string;
+  description: string;
 }
 
 export interface ContactRow {
@@ -124,11 +134,11 @@ export interface ShellText {
   };
   editor: {
     tabsLabel: string;
-    placeholder: string[];
     noIssues: string;
     line: string;
     column: string;
   };
+  scripts: Record<SectionId, string[]>;
   results: {
     results: string;
     messages: string;
@@ -150,6 +160,7 @@ export interface Texts {
   techStack: TechStackRow[];
   career: CareerRow[];
   projects: ProjectRow[];
+  beyondTheTerminal: BeyondTheTerminalRow[];
   contact: { intro: string; channels: ContactRow[] };
   resume: ResumeRow;
   simpleVersion: SimpleVersionText;
@@ -161,6 +172,7 @@ export interface Tables {
   "tech-stack": TechStackRow[];
   career: CareerRow[];
   projects: ProjectRow[];
+  "beyond-the-terminal": BeyondTheTerminalRow[];
   contact: ContactRow[];
   resume: ResumeRow[];
 }

@@ -3,6 +3,7 @@ import { getTexts } from "@/content";
 import type { Locale } from "@/content/locales";
 import { SECTION_IDS } from "@/content/types";
 import { AboutSection } from "./about-section";
+import { BeyondTheTerminalSection } from "./beyond-the-terminal-section";
 import { CareerSection } from "./career-section";
 import { ContactSection } from "./contact-section";
 import { ProjectsSection } from "./projects-section";
@@ -36,6 +37,7 @@ export function SimpleContent({ locale }: Readonly<{ locale: Locale }>) {
       <TechStackSection locale={locale} />
       <CareerSection locale={locale} />
       <ProjectsSection locale={locale} />
+      <BeyondTheTerminalSection locale={locale} />
       <ContactSection locale={locale} />
       <ResumeSection locale={locale} />
       <footer className={styles.footer}>

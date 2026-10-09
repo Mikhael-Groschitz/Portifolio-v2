@@ -3,26 +3,17 @@
 import type { KeyboardEvent, ReactNode } from "react";
 import { useWorkspace } from "@/components/shell/workspace-context";
 import { DOCUMENT_PANEL_ID, documentTabId } from "./document-ids";
+import { isExecuteShortcut } from "./execute-shortcut";
 import styles from "./editor.module.css";
 
-function isPlainF5(event: KeyboardEvent): boolean {
-  return (
-    event.key === "F5" &&
-    !event.ctrlKey &&
-    !event.altKey &&
-    !event.metaKey &&
-    !event.shiftKey
-  );
-}
-
 export function DocumentPanel({ children }: Readonly<{ children: ReactNode }>) {
-  const { activeSection, runSection } = useWorkspace();
+  const { activeDocument, runDocument } = useWorkspace();
 
   function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     const inEditor = (event.target as HTMLElement).closest("[data-editor]");
-    if (isPlainF5(event) && inEditor) {
+    if (isExecuteShortcut(event) && inEditor) {
       event.preventDefault();
-      runSection(activeSection);
+      runDocument(activeDocument);
     }
   }
 
@@ -30,7 +21,7 @@ export function DocumentPanel({ children }: Readonly<{ children: ReactNode }>) {
     <div
       id={DOCUMENT_PANEL_ID}
       role="tabpanel"
-      aria-labelledby={documentTabId(activeSection)}
+      aria-labelledby={documentTabId(activeDocument)}
       className={styles.panel}
       onKeyDown={handleKeyDown}
     >

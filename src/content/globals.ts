@@ -274,10 +274,42 @@ export const texts: Record<Locale, Texts> = {
           one: "({count} linha afetada)",
           other: "({count} linhas afetadas)",
         },
+        commandsCompleted: "Comandos concluídos com êxito.",
         completionTime: "Horário de conclusão",
         errorHeader:
           "Msg {number}, Nível {level}, Estado {state}, Linha {line}",
+        similarHint: "Dica: você quis dizer {command}?",
+        helpHint:
+          "Dica: digite HELP para ver as tabelas e os comandos, ou experimente {command}.",
         opensInNewTab: "abre em nova aba",
+      },
+      query: {
+        documentName: "SQLQuery1.sql",
+        editorLabel: "Nova consulta",
+        placeholder:
+          "Escreva uma consulta e pressione F5 ou clique em Executar. Não sabe por onde começar? Digite HELP.",
+        suggestions: "Sugestões",
+        kinds: {
+          keyword: "Palavra-chave",
+          table: "Tabela",
+          procedure: "Procedimento armazenado",
+          database: "Banco de dados",
+        },
+        help: {
+          objects: {
+            about: "Quem eu sou, em poucas linhas.",
+            "tech-stack": "As tecnologias com que eu trabalho.",
+            career:
+              "A minha trajetória, do trabalho mais recente para o mais antigo.",
+            projects: "Projetos que eu construí por conta própria.",
+            "beyond-the-terminal": "Um pouco do que eu faço longe do trabalho.",
+            contact: "Os meus canais de contato.",
+            resume: "O link para baixar o meu currículo em PDF.",
+          },
+          use: "Usa o banco Portfolio (ele já vem selecionado).",
+          spHelp: "Lista as tabelas e as procedures do banco.",
+          help: "Mostra esta ajuda.",
+        },
       },
       connection: {
         connected: "Conectado. (1/1)",
@@ -628,9 +660,40 @@ export const texts: Record<Locale, Texts> = {
           one: "({count} row affected)",
           other: "({count} rows affected)",
         },
+        commandsCompleted: "Commands completed successfully.",
         completionTime: "Completion time",
         errorHeader: "Msg {number}, Level {level}, State {state}, Line {line}",
+        similarHint: "Tip: did you mean {command}?",
+        helpHint:
+          "Tip: type HELP to see the tables and commands, or try {command}.",
         opensInNewTab: "opens in a new tab",
+      },
+      query: {
+        documentName: "SQLQuery1.sql",
+        editorLabel: "New query",
+        placeholder:
+          "Write a query and press F5 or click Execute. Not sure where to start? Type HELP.",
+        suggestions: "Suggestions",
+        kinds: {
+          keyword: "Keyword",
+          table: "Table",
+          procedure: "Stored procedure",
+          database: "Database",
+        },
+        help: {
+          objects: {
+            about: "Who I am, in a few lines.",
+            "tech-stack": "The technologies I work with.",
+            career: "My career path, from the most recent job to the oldest.",
+            projects: "Projects I built on my own.",
+            "beyond-the-terminal": "A bit of what I do away from work.",
+            contact: "My contact channels.",
+            resume: "The link to download my resume as a PDF.",
+          },
+          use: "Switches to the Portfolio database (it's already selected).",
+          spHelp: "Lists the tables and procedures in the database.",
+          help: "Shows this help.",
+        },
       },
       connection: {
         connected: "Connected. (1/1)",

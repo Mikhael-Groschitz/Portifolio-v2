@@ -10,32 +10,55 @@ import {
 } from "react";
 import { CaretDownIcon, CloseIcon, PinIcon } from "@/components/icons";
 import { LocaleText } from "@/components/locale/locale-text";
+import {
+  type DocumentId,
+  isDocumentId,
+  isQueryDocument,
+} from "@/components/shell/section-routes";
 import { useWorkspace } from "@/components/shell/workspace-context";
 import { neighborAfterClose } from "@/components/shell/workspace-state";
 import type { Localized } from "@/content/locales";
-import { type SectionId, isSectionId } from "@/content/types";
 import { catalogObject } from "@/engine/catalog";
 import { DOCUMENT_PANEL_ID, documentTabId } from "./document-ids";
 import styles from "./editor.module.css";
 
-export function DocumentTabs({ label }: Readonly<{ label: Localized }>) {
-  const { tabs, activeSection, activateSection, closeSection } = useWorkspace();
-  const [focusedId, setFocusedId] = useState<SectionId | null>(null);
-  const tabRefs = useRef(new Map<SectionId, HTMLButtonElement>());
+interface DocumentTabsProps {
+  label: Localized;
+  queryName: Localized;
+}
+
+function TabName({
+  document,
+  queryName,
+}: Readonly<{ document: DocumentId; queryName: Localized }>) {
+  if (isQueryDocument(document)) {
+    return <LocaleText text={queryName} />;
+  }
+  return `${catalogObject(document).name}.sql`;
+}
+
+export function DocumentTabs({
+  label,
+  queryName,
+}: Readonly<DocumentTabsProps>) {
+  const { tabs, activeDocument, activateDocument, closeDocument } =
+    useWorkspace();
+  const [focusedId, setFocusedId] = useState<DocumentId | null>(null);
+  const tabRefs = useRef(new Map<DocumentId, HTMLButtonElement>());
   const labelId = useId();
   const closable = tabs.length > 1;
   const tabStop =
-    focusedId !== null && tabs.includes(focusedId) ? focusedId : activeSection;
+    focusedId !== null && tabs.includes(focusedId) ? focusedId : activeDocument;
 
   useEffect(() => {
     tabRefs.current
-      .get(activeSection)
+      .get(activeDocument)
       ?.scrollIntoView({ block: "nearest", inline: "nearest" });
-  }, [activeSection]);
+  }, [activeDocument]);
 
-  function focusTab(section: SectionId | undefined) {
-    if (section) {
-      tabRefs.current.get(section)?.focus();
+  function focusTab(document: DocumentId | undefined) {
+    if (document) {
+      tabRefs.current.get(document)?.focus();
     }
   }
 
@@ -59,7 +82,7 @@ export function DocumentTabs({ label }: Readonly<{ label: Localized }>) {
           return;
         }
         focusTab(neighborAfterClose(tabs, tabStop));
-        closeSection(tabStop);
+        closeDocument(tabStop);
         break;
       default:
         return;
@@ -68,9 +91,9 @@ export function DocumentTabs({ label }: Readonly<{ label: Localized }>) {
   }
 
   function handleFocus(event: FocusEvent<HTMLDivElement>) {
-    const { section } = (event.target as HTMLElement).dataset;
-    if (isSectionId(section)) {
-      setFocusedId(section);
+    const { document } = (event.target as HTMLElement).dataset;
+    if (isDocumentId(document)) {
+      setFocusedId(document);
     }
   }
 
@@ -93,11 +116,11 @@ export function DocumentTabs({ label }: Readonly<{ label: Localized }>) {
         onFocus={handleFocus}
         onBlur={handleBlur}
       >
-        {tabs.map((section) => {
-          const selected = section === activeSection;
+        {tabs.map((document) => {
+          const selected = document === activeDocument;
           return (
             <div
-              key={section}
+              key={document}
               role="presentation"
               className={
                 selected ? `${styles.tab} ${styles.activeTab}` : styles.tab
@@ -106,31 +129,31 @@ export function DocumentTabs({ label }: Readonly<{ label: Localized }>) {
               <button
                 ref={(element) => {
                   if (element) {
-                    tabRefs.current.set(section, element);
+                    tabRefs.current.set(document, element);
                   }
                   return () => {
-                    tabRefs.current.delete(section);
+                    tabRefs.current.delete(document);
                   };
                 }}
-                id={documentTabId(section)}
+                id={documentTabId(document)}
                 type="button"
                 role="tab"
                 aria-selected={selected}
                 aria-controls={selected ? DOCUMENT_PANEL_ID : undefined}
                 aria-keyshortcuts={closable ? "Delete" : undefined}
-                tabIndex={section === tabStop ? 0 : -1}
-                data-section={section}
+                tabIndex={document === tabStop ? 0 : -1}
+                data-document={document}
                 className={styles.tabButton}
-                onClick={() => activateSection(section)}
+                onClick={() => activateDocument(document)}
               >
-                {catalogObject(section).name}.sql
+                <TabName document={document} queryName={queryName} />
               </button>
               <span className={styles.tabIcons} aria-hidden="true">
                 {selected && <PinIcon size={14} />}
                 {closable && (
                   <span
                     className={styles.closeTab}
-                    onClick={() => closeSection(section)}
+                    onClick={() => closeDocument(document)}
                   >
                     <CloseIcon size={14} />
                   </span>

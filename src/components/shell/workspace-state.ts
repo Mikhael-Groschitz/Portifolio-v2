@@ -1,6 +1,6 @@
 import type { Localized } from "@/content/locales";
-import type { SectionId } from "@/content/types";
 import type { ExecutionOutcome } from "@/engine/execute";
+import type { DocumentId } from "./section-routes";
 
 export interface PendingRun {
   id: number;
@@ -19,16 +19,16 @@ export interface FinishedRun {
 export type Run = PendingRun | FinishedRun;
 
 export interface WorkspaceState {
-  tabs: readonly SectionId[];
-  runs: Partial<Record<SectionId, Run>>;
+  tabs: readonly DocumentId[];
+  runs: Partial<Record<DocumentId, Run>>;
 }
 
 export type WorkspaceAction =
-  | { type: "open"; section: SectionId; active: SectionId }
-  | { type: "close"; section: SectionId; active: SectionId }
-  | { type: "start"; section: SectionId; id: number }
-  | { type: "finish"; section: SectionId; run: FinishedRun }
-  | { type: "connect"; section: SectionId; run: FinishedRun };
+  | { type: "open"; document: DocumentId; active: DocumentId }
+  | { type: "close"; document: DocumentId; active: DocumentId }
+  | { type: "start"; document: DocumentId; id: number }
+  | { type: "finish"; document: DocumentId; run: FinishedRun }
+  | { type: "connect"; document: DocumentId; run: FinishedRun };
 
 export function connectionRun(
   outcomes: Localized<ExecutionOutcome>,
@@ -67,33 +67,36 @@ export function userRun(
 }
 
 export function initialWorkspace(
-  active: SectionId,
-  outcomes: Localized<ExecutionOutcome>,
+  active: DocumentId,
+  outcomes: Localized<ExecutionOutcome> | null,
 ): WorkspaceState {
-  return { tabs: [active], runs: { [active]: connectionRun(outcomes) } };
+  return {
+    tabs: [active],
+    runs: outcomes ? { [active]: connectionRun(outcomes) } : {},
+  };
 }
 
 export function withActive(
-  tabs: readonly SectionId[],
-  active: SectionId,
-): readonly SectionId[] {
+  tabs: readonly DocumentId[],
+  active: DocumentId,
+): readonly DocumentId[] {
   return tabs.includes(active) ? tabs : [...tabs, active];
 }
 
 export function neighborAfterClose(
-  tabs: readonly SectionId[],
-  closed: SectionId,
-): SectionId {
+  tabs: readonly DocumentId[],
+  closed: DocumentId,
+): DocumentId {
   const index = tabs.indexOf(closed);
   return tabs[index + 1] ?? tabs[index - 1] ?? closed;
 }
 
 function withoutRun(
   runs: WorkspaceState["runs"],
-  section: SectionId,
+  document: DocumentId,
 ): WorkspaceState["runs"] {
   return Object.fromEntries(
-    Object.entries(runs).filter(([key]) => key !== section),
+    Object.entries(runs).filter(([key]) => key !== document),
   );
 }
 
@@ -106,7 +109,9 @@ export function workspaceReducer(
       const tabs = withActive(state.tabs, action.active);
       return {
         ...state,
-        tabs: tabs.includes(action.section) ? tabs : [...tabs, action.section],
+        tabs: tabs.includes(action.document)
+          ? tabs
+          : [...tabs, action.document],
       };
     }
     case "close": {
@@ -115,8 +120,8 @@ export function workspaceReducer(
         return { ...state, tabs };
       }
       return {
-        tabs: tabs.filter((tab) => tab !== action.section),
-        runs: withoutRun(state.runs, action.section),
+        tabs: tabs.filter((tab) => tab !== action.document),
+        runs: withoutRun(state.runs, action.document),
       };
     }
     case "start":
@@ -124,21 +129,21 @@ export function workspaceReducer(
         ...state,
         runs: {
           ...state.runs,
-          [action.section]: { id: action.id, status: "executing" },
+          [action.document]: { id: action.id, status: "executing" },
         },
       };
     case "finish":
-      if (state.runs[action.section]?.id !== action.run.id) {
+      if (state.runs[action.document]?.id !== action.run.id) {
         return state;
       }
       return {
         ...state,
-        runs: { ...state.runs, [action.section]: action.run },
+        runs: { ...state.runs, [action.document]: action.run },
       };
     case "connect":
       return {
-        tabs: withActive(state.tabs, action.section),
-        runs: { ...state.runs, [action.section]: action.run },
+        tabs: withActive(state.tabs, action.document),
+        runs: { ...state.runs, [action.document]: action.run },
       };
   }
 }

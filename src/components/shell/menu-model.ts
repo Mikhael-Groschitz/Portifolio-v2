@@ -1,6 +1,8 @@
 import type { MenuId, MenuItemId } from "@/content/types";
 
-export type MenuCommand = "showExplorer" | "switchLanguage";
+export type MenuCommand = "newQuery" | "showExplorer" | "switchLanguage";
+
+export const NEW_QUERY_SHORTCUT = "Alt+N";
 
 export type MenuAction =
   { kind: "command"; command: MenuCommand } | { kind: "link"; href: string };
@@ -24,7 +26,11 @@ export const MENUS: readonly MenuDefinition[] = [
   {
     id: "file",
     entries: [
-      { id: "newQuery", shortcut: "Ctrl+N" },
+      {
+        id: "newQuery",
+        shortcut: NEW_QUERY_SHORTCUT,
+        action: { kind: "command", command: "newQuery" },
+      },
       { id: "openFile", shortcut: "Ctrl+O" },
       SEPARATOR,
       { id: "save", shortcut: "Ctrl+S" },

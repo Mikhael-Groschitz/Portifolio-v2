@@ -45,7 +45,7 @@ EXEC dbo.sp_DownloadCV @Language = N'pt-BR', @Retries = 3;`;
 const tokenValues = parseTokens(
   readFileSync(path.join(process.cwd(), "src/theme/tokens.css"), "utf8"),
 );
-const sqlLines = await highlightTsql(SAMPLE_SQL, catalogIdentifiers());
+const sqlLines = highlightTsql(SAMPLE_SQL, catalogIdentifiers());
 
 const ratioFormat = new Intl.NumberFormat("pt-BR", {
   minimumFractionDigits: 2,

@@ -67,6 +67,10 @@
   font-size: 13px;
 }
 
+.grid + .grid {
+  margin-block-start: 12px;
+}
+
 .grid th,
 .grid td {
   padding: 2px 8px;

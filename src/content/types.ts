@@ -119,9 +119,28 @@ export interface ResultsText {
   messages: string;
   rowNumber: string;
   rowsAffected: CountText;
+  commandsCompleted: string;
   completionTime: string;
   errorHeader: string;
+  similarHint: string;
+  helpHint: string;
   opensInNewTab: string;
+}
+
+export type CompletionKind = "keyword" | "table" | "procedure" | "database";
+
+export interface QueryText {
+  documentName: string;
+  editorLabel: string;
+  placeholder: string;
+  suggestions: string;
+  kinds: Record<CompletionKind, string>;
+  help: {
+    objects: Record<SectionId, string>;
+    use: string;
+    spHelp: string;
+    help: string;
+  };
 }
 
 export interface ConnectionText {
@@ -219,6 +238,7 @@ export interface ShellText {
   };
   scripts: Record<SectionId, string[]>;
   results: ResultsText;
+  query: QueryText;
   connection: ConnectionText;
   connect: ConnectText;
   status: {

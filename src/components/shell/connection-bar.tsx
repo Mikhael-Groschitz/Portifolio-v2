@@ -14,6 +14,7 @@ import { type Localized, mapLocalized } from "@/content/locales";
 import { byProfile } from "@/content/profiles";
 import type { ConnectionText } from "@/content/types";
 import { DATABASE, SERVER } from "@/engine/catalog";
+import { rowCountOf } from "@/engine/execute";
 import { useWorkspace } from "./workspace-context";
 import type { Run } from "./workspace-state";
 import styles from "./bars.module.css";
@@ -27,22 +28,22 @@ const STATUS_ICONS: Record<StatusKey, ReactNode> = {
   failed: <WarningIcon />,
 };
 
-function statusOf(run: Run): StatusKey {
+function statusOf(run: Run | null): StatusKey {
+  if (!run || (run.status === "done" && run.origin === "connection")) {
+    return "connected";
+  }
   if (run.status === "executing") {
     return "executing";
   }
-  if (run.status === "error") {
-    return "failed";
-  }
-  return run.origin === "connection" ? "connected" : "succeeded";
+  return run.status === "error" ? "failed" : "succeeded";
 }
 
-function rowCountOf(run: Run): number {
-  if (run.status !== "done") {
-    return 0;
-  }
-  const outcome = run.outcomes["pt-BR"];
-  return outcome.kind === "rows" ? outcome.resultSet.rows.length : 0;
+function rowsOf(run: Run | null): number {
+  return run?.status === "done" ? rowCountOf(run.outcomes["pt-BR"]) : 0;
+}
+
+function elapsedOf(run: Run | null): number {
+  return run && run.status !== "executing" ? run.elapsedMs : 0;
 }
 
 export function ConnectionBar({
@@ -50,8 +51,8 @@ export function ConnectionBar({
 }: Readonly<{ text: Localized<ConnectionText> }>) {
   const { activeRun } = useWorkspace();
   const status = statusOf(activeRun);
-  const rows = rowCountOf(activeRun);
-  const elapsed = activeRun.status === "executing" ? 0 : activeRun.elapsedMs;
+  const rows = rowsOf(activeRun);
+  const elapsed = elapsedOf(activeRun);
 
   return (
     <div className={styles.connectionBar}>

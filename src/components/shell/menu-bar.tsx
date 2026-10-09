@@ -29,6 +29,7 @@ import {
   wrapIndex,
 } from "./menu-model";
 import { useShell } from "./shell-frame";
+import { useWorkspace } from "./workspace-context";
 import styles from "./menu-bar.module.css";
 
 type ItemFocus = "first" | "last";
@@ -58,6 +59,7 @@ function focusItem(container: HTMLElement | null, itemFocus: ItemFocus) {
 export function MenuBar({ text, languageNames }: Readonly<MenuBarProps>) {
   const { locale, setLocale } = useLanguage();
   const { showExplorer } = useShell();
+  const { openQuery } = useWorkspace();
   const baseId = useId();
   const [openId, setOpenId] = useState<MenuTriggerId | null>(null);
   const [focusedId, setFocusedId] = useState<MenuTriggerId | null>(null);
@@ -123,7 +125,9 @@ export function MenuBar({ text, languageNames }: Readonly<MenuBarProps>) {
   }
 
   function runCommand(command: MenuCommand) {
-    if (command === "showExplorer") {
+    if (command === "newQuery") {
+      openQuery();
+    } else if (command === "showExplorer") {
       showExplorer();
     } else {
       setLocale(nextLocale(locale));

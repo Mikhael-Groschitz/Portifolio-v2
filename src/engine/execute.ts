@@ -1,4 +1,4 @@
-import { getTable } from "@/content";
+import { getTable, getTexts } from "@/content";
 import type { Locale } from "@/content/locales";
 import { isPlaceholder } from "@/content/placeholder";
 import {
@@ -6,11 +6,17 @@ import {
   type CatalogColumn,
   type CatalogColumnType,
   type CatalogObject,
+  type CatalogObjectKind,
   DATABASE,
+  SCHEMA,
   qualifiedName,
 } from "./catalog";
-import { normalize } from "./normalize";
-import { sectionQuery, sectionScript } from "./scripts";
+import { ERROR_LEVEL, ERROR_STATE, pickError } from "./errors";
+import { type QueryHint, commandFor, hintFor } from "./hints";
+import { type Statement, splitStatements } from "./normalize";
+import { sectionQuery } from "./scripts";
+
+export const MAX_QUERY_LENGTH = 10_000;
 
 export type Cell =
   | { kind: "text"; text: string }
@@ -36,30 +42,37 @@ export interface SqlError {
   message: string;
 }
 
+export type StatementResult =
+  { kind: "rows"; resultSet: ResultSet } | { kind: "done" };
+
 export type ExecutionOutcome =
-  | { kind: "rows"; database: string; resultSet: ResultSet }
-  | { kind: "error"; database: string; error: SqlError };
+  | { kind: "results"; database: string; results: readonly StatementResult[] }
+  | { kind: "error"; database: string; error: SqlError; hint: QueryHint };
 
 export interface ExecutionContext {
   locale: Locale;
+  random?: () => number;
 }
 
-function commandForms(object: CatalogObject): string[] {
-  const shortcuts =
-    object.kind === "table"
-      ? [
-          `SELECT * FROM ${qualifiedName(object)}`,
-          `SELECT * FROM ${object.name}`,
-        ]
-      : [`EXEC ${object.name}`];
-  return [sectionQuery(object), sectionScript(object, []), ...shortcuts];
-}
+type Command = (locale: Locale) => StatementResult[];
 
-const COMMANDS = new Map(
-  CATALOG.flatMap((object) =>
-    commandForms(object).map((form) => [normalize(form), object] as const),
-  ),
-);
+const OBJECT_TYPES: Record<CatalogObjectKind, string> = {
+  table: "user table",
+  procedure: "stored procedure",
+};
+
+const HELP_FORMS = [
+  "HELP",
+  "sp_help",
+  "EXEC sp_help",
+  "EXECUTE sp_help",
+  "EXEC sys.sp_help",
+  "EXECUTE sys.sp_help",
+];
+
+function textCell(text: string): Cell {
+  return { kind: "text", text };
+}
 
 function fieldValue(row: object, field: string): unknown {
   return (row as Record<string, unknown>)[field];
@@ -83,7 +96,7 @@ function cellOf(row: object, column: CatalogColumn): Cell {
       download: typeof fileName === "string" ? fileName : undefined,
     };
   }
-  return { kind: "text", text };
+  return textCell(text);
 }
 
 function resultSetOf(object: CatalogObject, locale: Locale): ResultSet {
@@ -97,14 +110,99 @@ function resultSetOf(object: CatalogObject, locale: Locale): ResultSet {
   };
 }
 
-function syntaxError(command: string): SqlError {
-  const [nearToken = ""] = command.split(" ");
+function helpResults(locale: Locale): StatementResult[] {
+  const descriptions = getTexts(locale).shell.query.help;
+  const objects: ResultSet = {
+    source: "sp_help",
+    columns: [
+      { name: "Name", type: "text" },
+      { name: "Owner", type: "text" },
+      { name: "Object_type", type: "text" },
+    ],
+    rows: CATALOG.map((object) => [
+      textCell(object.name),
+      textCell(SCHEMA),
+      textCell(OBJECT_TYPES[object.kind]),
+    ]),
+  };
+  const commands: ResultSet = {
+    source: "HELP",
+    columns: [
+      { name: "Command", type: "text" },
+      { name: "Description", type: "long" },
+    ],
+    rows: [
+      ...CATALOG.map((object) => [
+        textCell(commandFor(object)),
+        textCell(descriptions.objects[object.section]),
+      ]),
+      [textCell(`USE ${DATABASE}`), textCell(descriptions.use)],
+      [textCell("EXEC sp_help"), textCell(descriptions.spHelp)],
+      [textCell("HELP"), textCell(descriptions.help)],
+    ],
+  };
+  return [
+    { kind: "rows", resultSet: objects },
+    { kind: "rows", resultSet: commands },
+  ];
+}
+
+function objectForms(object: CatalogObject): string[] {
+  const targets = [
+    qualifiedName(object),
+    object.name,
+    `${DATABASE}.${qualifiedName(object)}`,
+  ];
+  if (object.kind === "procedure") {
+    return targets.flatMap((target) => [
+      target,
+      `EXEC ${target}`,
+      `EXECUTE ${target}`,
+    ]);
+  }
+  return [
+    sectionQuery(object),
+    ...targets.map((target) => `SELECT * FROM ${target}`),
+  ];
+}
+
+function statementKey(form: string): string {
+  return splitStatements(form)[0]?.text ?? "";
+}
+
+function entries(
+  forms: readonly string[],
+  command: Command,
+): [string, Command][] {
+  return forms.map((form) => [statementKey(form), command]);
+}
+
+const COMMANDS = new Map<string, Command>([
+  ...CATALOG.flatMap((object) =>
+    entries(objectForms(object), (locale) => [
+      { kind: "rows", resultSet: resultSetOf(object, locale) },
+    ]),
+  ),
+  ...entries([`USE ${DATABASE}`], () => [{ kind: "done" }]),
+  ...entries(HELP_FORMS, helpResults),
+]);
+
+function failure(
+  statement: Statement,
+  { locale, random = Math.random }: ExecutionContext,
+): ExecutionOutcome {
+  const entry = pickError(random);
   return {
-    number: 102,
-    level: 15,
-    state: 1,
-    line: 1,
-    message: `Incorrect syntax near '${nearToken}'.`,
+    kind: "error",
+    database: DATABASE,
+    error: {
+      number: entry.code,
+      level: ERROR_LEVEL,
+      state: ERROR_STATE,
+      line: statement.line,
+      message: entry.text[locale],
+    },
+    hint: hintFor(statement.text),
   };
 }
 
@@ -112,14 +210,32 @@ export function execute(
   input: string,
   context: ExecutionContext,
 ): ExecutionOutcome {
-  const command = normalize(input);
-  const object = COMMANDS.get(command);
-  if (!object) {
-    return { kind: "error", database: DATABASE, error: syntaxError(command) };
+  if (input.length > MAX_QUERY_LENGTH) {
+    return failure({ text: "", line: 1 }, context);
   }
-  return {
-    kind: "rows",
-    database: DATABASE,
-    resultSet: resultSetOf(object, context.locale),
-  };
+  const results: StatementResult[] = [];
+  for (const statement of splitStatements(input)) {
+    const command = COMMANDS.get(statement.text);
+    if (!command) {
+      return failure(statement, context);
+    }
+    results.push(...command(context.locale));
+  }
+  return { kind: "results", database: DATABASE, results };
+}
+
+export function resultSetsOf(outcome: ExecutionOutcome): ResultSet[] {
+  if (outcome.kind === "error") {
+    return [];
+  }
+  return outcome.results.flatMap((result) =>
+    result.kind === "rows" ? [result.resultSet] : [],
+  );
+}
+
+export function rowCountOf(outcome: ExecutionOutcome): number {
+  return resultSetsOf(outcome).reduce(
+    (total, resultSet) => total + resultSet.rows.length,
+    0,
+  );
 }

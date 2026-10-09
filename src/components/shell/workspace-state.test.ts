@@ -11,14 +11,20 @@ import {
 } from "./workspace-state";
 
 const rows: ExecutionOutcome = {
-  kind: "rows",
+  kind: "results",
   database: "Portfolio",
-  resultSet: { source: "dbo.About", columns: [], rows: [] },
+  results: [
+    {
+      kind: "rows",
+      resultSet: { source: "dbo.About", columns: [], rows: [] },
+    },
+  ],
 };
 const failure: ExecutionOutcome = {
   kind: "error",
   database: "Portfolio",
-  error: { number: 102, level: 15, state: 1, line: 1, message: "x" },
+  error: { number: 404, level: 16, state: 1, line: 1, message: "x" },
+  hint: { command: "SELECT * FROM dbo.About", similar: false },
 };
 const success: Localized<ExecutionOutcome> = { "pt-BR": rows, en: rows };
 const moment = new Date(0);
@@ -37,21 +43,37 @@ describe("tabs", () => {
   it("opens a tab once and never duplicates it", () => {
     const opened = workspaceReducer(initialWorkspace("about", success), {
       type: "open",
-      section: "career",
+      document: "career",
       active: "about",
     });
     const again = workspaceReducer(opened, {
       type: "open",
-      section: "career",
+      document: "career",
       active: "career",
     });
     expect(again.tabs).toEqual(["about", "career"]);
   });
 
+  it("starts the new query without results", () => {
+    expect(initialWorkspace("query", null)).toEqual({
+      tabs: ["query"],
+      runs: {},
+    });
+  });
+
+  it("opens the new query next to the sections", () => {
+    const state = workspaceReducer(initialWorkspace("about", success), {
+      type: "open",
+      document: "query",
+      active: "about",
+    });
+    expect(state.tabs).toEqual(["about", "query"]);
+  });
+
   it("keeps the tab reached through back and forward", () => {
     const state = workspaceReducer(initialWorkspace("about", success), {
       type: "open",
-      section: "contact",
+      document: "contact",
       active: "projects",
     });
     expect(state.tabs).toEqual(["about", "projects", "contact"]);
@@ -60,12 +82,12 @@ describe("tabs", () => {
   it("closes tabs with their results but always keeps one open", () => {
     const two = workspaceReducer(initialWorkspace("about", success), {
       type: "open",
-      section: "career",
+      document: "career",
       active: "about",
     });
     const one = workspaceReducer(two, {
       type: "close",
-      section: "about",
+      document: "about",
       active: "career",
     });
     expect(one.tabs).toEqual(["career"]);
@@ -73,7 +95,7 @@ describe("tabs", () => {
     expect(
       workspaceReducer(one, {
         type: "close",
-        section: "career",
+        document: "career",
         active: "career",
       }).tabs,
     ).toEqual(["career"]);
@@ -84,13 +106,13 @@ describe("runs", () => {
   it("goes from executing to done", () => {
     const started = workspaceReducer(initialWorkspace("about", success), {
       type: "start",
-      section: "about",
+      document: "about",
       id: 1,
     });
     expect(started.runs.about).toEqual({ id: 1, status: "executing" });
     const finished = workspaceReducer(started, {
       type: "finish",
-      section: "about",
+      document: "about",
       run: userRun(1, success, moment, 150),
     });
     expect(finished.runs.about).toMatchObject({
@@ -109,17 +131,17 @@ describe("runs", () => {
   it("ignores a run that was replaced or closed", () => {
     const first = workspaceReducer(initialWorkspace("about", success), {
       type: "start",
-      section: "about",
+      document: "about",
       id: 1,
     });
     const second = workspaceReducer(first, {
       type: "start",
-      section: "about",
+      document: "about",
       id: 2,
     });
     const stale = workspaceReducer(second, {
       type: "finish",
-      section: "about",
+      document: "about",
       run: userRun(1, success, moment, 1),
     });
     expect(stale.runs.about).toEqual({ id: 2, status: "executing" });
@@ -128,7 +150,7 @@ describe("runs", () => {
   it("runs the current section again when the visitor connects", () => {
     const connected = workspaceReducer(initialWorkspace("about", success), {
       type: "connect",
-      section: "career",
+      document: "career",
       run: connectionRun(success, { id: 3, completedAt: moment }),
     });
     expect(connected.tabs).toEqual(["about", "career"]);

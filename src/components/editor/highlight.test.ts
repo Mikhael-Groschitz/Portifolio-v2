@@ -3,16 +3,16 @@ import { highlightTsql } from "./highlight";
 
 const identifiers = new Set(["Name", "Role", "Description", "Url", "Career"]);
 
-async function colorsOf(code: string) {
-  const lines = await highlightTsql(code, identifiers);
+function colorsOf(code: string) {
+  const lines = highlightTsql(code, identifiers);
   const tokens = lines.flat().filter((token) => token.content.trim());
   return (text: string) =>
     tokens.find((token) => token.content === text)?.color;
 }
 
 describe("highlightTsql", () => {
-  it("keeps keywords blue and column names in the identifier color", async () => {
-    const colorOf = await colorsOf(
+  it("keeps keywords blue and column names in the identifier color", () => {
+    const colorOf = colorsOf(
       "SELECT Name, Role, Description\nFROM dbo.Career\nORDER BY Role DESC;",
     );
     for (const keyword of ["SELECT", "FROM", "ORDER", "BY", "DESC"]) {
@@ -23,8 +23,8 @@ describe("highlightTsql", () => {
     }
   });
 
-  it("paints punctuation and logical operators gray, like SSMS", async () => {
-    const colorOf = await colorsOf(
+  it("paints punctuation and logical operators gray, like SSMS", () => {
+    const colorOf = colorsOf(
       "SELECT Name, Url FROM dbo.Career WHERE Url LIKE 'x%' AND Name IS NOT NULL;",
     );
     for (const operator of [",", ".", ";", "LIKE", "AND"]) {
@@ -32,8 +32,8 @@ describe("highlightTsql", () => {
     }
   });
 
-  it("leaves comments and strings untouched", async () => {
-    const colorOf = await colorsOf(
+  it("leaves comments and strings untouched", () => {
+    const colorOf = colorsOf(
       "-- Role, Name and Description\nSELECT 'Role, Name' AS Name;",
     );
     expect(colorOf("-- Role, Name and Description")).toBe(

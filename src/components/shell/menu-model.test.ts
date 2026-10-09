@@ -40,6 +40,7 @@ describe("menus", () => {
 
   it("only enables the items that already do something", () => {
     expect(items.filter((item) => item.action).map((item) => item.id)).toEqual([
+      "newQuery",
       "objectExplorer",
       "language",
       "simpleVersion",

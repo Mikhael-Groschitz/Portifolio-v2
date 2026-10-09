@@ -15,6 +15,7 @@ import { useWorkspace } from "@/components/shell/workspace-context";
 import type { Run } from "@/components/shell/workspace-state";
 import type { Localized } from "@/content/locales";
 import type { ResultsText } from "@/content/types";
+import { resultSetsOf } from "@/engine/execute";
 import { MessagesPane } from "./messages-pane";
 import { ResultsGrid } from "./results-grid";
 import styles from "./results.module.css";
@@ -42,11 +43,19 @@ interface RunViewsProps extends ResultsPanelProps {
   run: Run;
 }
 
+function viewsOf(run: Run): readonly ResultsView[] {
+  if (run.status === "executing") {
+    return VIEWS;
+  }
+  const hasGrids =
+    run.status === "done" && resultSetsOf(run.outcomes["pt-BR"]).length > 0;
+  return hasGrids ? VIEWS : ["messages"];
+}
+
 function RunViews({ run, labels, text }: Readonly<RunViewsProps>) {
   const baseId = useId();
   const loadedAt = useLoadedAt();
-  const views: readonly ResultsView[] =
-    run.status === "error" ? ["messages"] : VIEWS;
+  const views = viewsOf(run);
   const [chosen, setChosen] = useState<ResultsView>("results");
   const active = views.includes(chosen) ? chosen : views[0];
   const tabRefs = useRef(new Map<ResultsView, HTMLButtonElement>());
@@ -91,15 +100,14 @@ function RunViews({ run, labels, text }: Readonly<RunViewsProps>) {
               />
             );
           }
-          return (
-            outcome.kind === "rows" && (
-              <ResultsGrid
-                resultSet={outcome.resultSet}
-                rowNumberLabel={text[locale].rowNumber}
-                newTabLabel={text[locale].opensInNewTab}
-              />
-            )
-          );
+          return resultSetsOf(outcome).map((resultSet, index) => (
+            <ResultsGrid
+              key={index}
+              resultSet={resultSet}
+              rowNumberLabel={text[locale].rowNumber}
+              newTabLabel={text[locale].opensInNewTab}
+            />
+          ));
         }}
       </LocaleBlocks>
     );
@@ -151,10 +159,13 @@ function RunViews({ run, labels, text }: Readonly<RunViewsProps>) {
 }
 
 export function ResultsPanel(props: Readonly<ResultsPanelProps>) {
-  const { activeSection, activeRun } = useWorkspace();
+  const { activeDocument, activeRun } = useWorkspace();
+  if (!activeRun) {
+    return null;
+  }
   return (
     <RunViews
-      key={`${activeSection}-${activeRun.id}`}
+      key={`${activeDocument}-${activeRun.id}`}
       run={activeRun}
       {...props}
     />

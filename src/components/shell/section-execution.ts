@@ -5,6 +5,13 @@ import { catalogObject } from "@/engine/catalog";
 import { type ExecutionOutcome, execute } from "@/engine/execute";
 import { sectionScript } from "@/engine/scripts";
 
+export function executeQuery(
+  input: string,
+  seed: number,
+): Localized<ExecutionOutcome> {
+  return byLocale((locale) => execute(input, { locale, random: () => seed }));
+}
+
 export function executeSection(
   section: SectionId,
 ): Localized<ExecutionOutcome> {

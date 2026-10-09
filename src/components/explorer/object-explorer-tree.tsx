@@ -15,7 +15,7 @@ export function ObjectExplorerTree({
   nodes,
   labelledBy,
 }: Readonly<ObjectExplorerTreeProps>) {
-  const { activeSection, openSection } = useWorkspace();
+  const { activeDocument, openSection } = useWorkspace();
   const { closeExplorer } = useShell();
 
   function activate(id: string) {
@@ -29,7 +29,7 @@ export function ObjectExplorerTree({
     <ExplorerTree
       nodes={nodes}
       labelledBy={labelledBy}
-      selectedId={activeSection}
+      selectedId={activeDocument}
       onActivate={activate}
     />
   );

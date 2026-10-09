@@ -1,4 +1,6 @@
-import { codeToTokens } from "shiki";
+import { type HighlighterCore, createHighlighterCoreSync } from "shiki/core";
+import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
+import sql from "shiki/langs/sql.mjs";
 import { ssmsDarkTheme } from "@/theme/shiki-theme";
 
 export interface CodeToken {
@@ -30,6 +32,8 @@ const LOGICAL_OPERATORS = new Set([
 ]);
 const PIECES = /\s+|[,;.()]|[^\s,;.()]+/g;
 const PUNCTUATION = /^[,;.()]$/;
+
+let highlighter: HighlighterCore | null = null;
 
 function pieceColor(
   piece: string,
@@ -63,11 +67,20 @@ export function retint(
   });
 }
 
-export async function highlightTsql(
+function sqlHighlighter(): HighlighterCore {
+  highlighter ??= createHighlighterCoreSync({
+    themes: [ssmsDarkTheme],
+    langs: [sql],
+    engine: createJavaScriptRegexEngine(),
+  });
+  return highlighter;
+}
+
+export function highlightTsql(
   code: string,
   identifiers: ReadonlySet<string>,
-): Promise<CodeToken[][]> {
-  const { tokens } = await codeToTokens(code, {
+): CodeToken[][] {
+  const { tokens } = sqlHighlighter().codeToTokens(code, {
     lang: "sql",
     theme: ssmsDarkTheme,
   });

@@ -13,10 +13,13 @@ export function Workspace({ children }: Readonly<{ children: ReactNode }>) {
 
   return (
     <main className={styles.document}>
-      <DocumentTabs label={localize((texts) => texts.shell.editor.tabsLabel)} />
+      <DocumentTabs
+        label={localize((texts) => texts.shell.editor.tabsLabel)}
+        queryName={localize((texts) => texts.shell.query.documentName)}
+      />
       <DocumentPanel>
         {children}
-        <EditorBar />
+        <EditorBar text={localize((texts) => texts.shell.editor)} />
         <ResultsPanel
           labels={{
             results: mapLocalized(results, (text) => text.results),

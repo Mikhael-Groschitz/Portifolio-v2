@@ -11,10 +11,25 @@ import {
   useMemo,
   useReducer,
   useRef,
+  useState,
 } from "react";
+import { readConnectionStatus } from "@/components/connect/connection-runtime";
+import {
+  type QueryStore,
+  createQueryStore,
+  queryToRun,
+} from "@/components/editor/query-store";
+import type { Localized } from "@/content/locales";
 import { SECTION_IDS, type SectionId } from "@/content/types";
-import { executeSection } from "./section-execution";
-import { sectionFromSegment, sectionPath } from "./section-routes";
+import type { ExecutionOutcome } from "@/engine/execute";
+import { executeQuery, executeSection } from "./section-execution";
+import {
+  type DocumentId,
+  QUERY_DOCUMENT,
+  documentFromSegment,
+  documentPath,
+  isQueryDocument,
+} from "./section-routes";
 import {
   type Run,
   connectionRun,
@@ -28,44 +43,65 @@ import {
 const EXECUTION_DELAY_MS = 150;
 
 interface WorkspaceContextValue {
-  tabs: readonly SectionId[];
-  activeSection: SectionId;
-  activeRun: Run;
-  activateSection: (section: SectionId) => void;
+  tabs: readonly DocumentId[];
+  activeDocument: DocumentId;
+  activeRun: Run | null;
+  query: QueryStore;
+  activateDocument: (document: DocumentId) => void;
   openSection: (section: SectionId) => void;
-  runSection: (section: SectionId) => void;
-  closeSection: (section: SectionId) => void;
+  openQuery: () => void;
+  runDocument: (document: DocumentId) => void;
+  closeDocument: (document: DocumentId) => void;
   connect: () => void;
 }
 
 const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
 
-function startWorkspace(section: SectionId) {
-  return initialWorkspace(section, executeSection(section));
+function connectionOutcomes(
+  document: DocumentId,
+): Localized<ExecutionOutcome> | null {
+  return isQueryDocument(document) ? null : executeSection(document);
+}
+
+function startWorkspace(document: DocumentId) {
+  return initialWorkspace(document, connectionOutcomes(document));
+}
+
+function isNewQueryShortcut(event: KeyboardEvent): boolean {
+  return (
+    event.code === "KeyN" &&
+    event.altKey !== event.ctrlKey &&
+    !event.shiftKey &&
+    !event.metaKey
+  );
 }
 
 export function WorkspaceProvider({
   children,
 }: Readonly<{ children: ReactNode }>) {
   const router = useRouter();
-  const activeSection = sectionFromSegment(useSelectedLayoutSegment());
+  const activeDocument = documentFromSegment(useSelectedLayoutSegment());
   const [state, dispatch] = useReducer(
     workspaceReducer,
-    activeSection,
+    activeDocument,
     startWorkspace,
   );
-  const tabs = withActive(state.tabs, activeSection);
-  const storedRun = state.runs[activeSection];
-  const activeRun = useMemo(
-    () => storedRun ?? connectionRun(executeSection(activeSection)),
-    [storedRun, activeSection],
-  );
+  const [query] = useState(createQueryStore);
+  const tabs = withActive(state.tabs, activeDocument);
+  const storedRun = state.runs[activeDocument];
+  const activeRun = useMemo(() => {
+    if (storedRun) {
+      return storedRun;
+    }
+    const outcomes = connectionOutcomes(activeDocument);
+    return outcomes ? connectionRun(outcomes) : null;
+  }, [storedRun, activeDocument]);
   const runIds = useRef(0);
   const timers = useRef(new Set<number>());
 
   useEffect(() => {
     for (const section of SECTION_IDS) {
-      router.prefetch(sectionPath(section));
+      router.prefetch(documentPath(section));
     }
   }, [router]);
 
@@ -78,95 +114,131 @@ export function WorkspaceProvider({
     };
   }, []);
 
-  const runSection = useCallback((section: SectionId) => {
-    runIds.current += 1;
-    const id = runIds.current;
-    const startedAt = performance.now();
-    dispatch({ type: "start", section, id });
-    const timer = window.setTimeout(() => {
-      timers.current.delete(timer);
-      dispatch({
-        type: "finish",
-        section,
-        run: userRun(
-          id,
-          executeSection(section),
-          new Date(),
-          performance.now() - startedAt,
-        ),
-      });
-    }, EXECUTION_DELAY_MS);
-    timers.current.add(timer);
-  }, []);
+  const runDocument = useCallback(
+    (document: DocumentId) => {
+      runIds.current += 1;
+      const id = runIds.current;
+      const startedAt = performance.now();
+      const seed = Math.random();
+      const input = queryToRun(query.getSnapshot());
+      const outcomes = () =>
+        isQueryDocument(document)
+          ? executeQuery(input, seed)
+          : executeSection(document);
+      dispatch({ type: "start", document, id });
+      const timer = window.setTimeout(() => {
+        timers.current.delete(timer);
+        dispatch({
+          type: "finish",
+          document,
+          run: userRun(
+            id,
+            outcomes(),
+            new Date(),
+            performance.now() - startedAt,
+          ),
+        });
+      }, EXECUTION_DELAY_MS);
+      timers.current.add(timer);
+    },
+    [query],
+  );
 
-  const activateSection = useCallback(
-    (section: SectionId) => {
+  const activateDocument = useCallback(
+    (document: DocumentId) => {
       startTransition(() => {
-        dispatch({ type: "open", section, active: activeSection });
-        if (section !== activeSection) {
-          router.push(sectionPath(section), { scroll: false });
+        dispatch({ type: "open", document, active: activeDocument });
+        if (document !== activeDocument) {
+          router.push(documentPath(document), { scroll: false });
         }
       });
     },
-    [activeSection, router],
+    [activeDocument, router],
   );
 
   const openSection = useCallback(
     (section: SectionId) => {
-      activateSection(section);
-      runSection(section);
+      activateDocument(section);
+      runDocument(section);
     },
-    [activateSection, runSection],
+    [activateDocument, runDocument],
   );
 
-  const closeSection = useCallback(
-    (section: SectionId) => {
+  const openQuery = useCallback(() => {
+    query.requestFocus();
+    activateDocument(QUERY_DOCUMENT);
+  }, [activateDocument, query]);
+
+  const closeDocument = useCallback(
+    (document: DocumentId) => {
       if (tabs.length < 2) {
         return;
       }
+      if (isQueryDocument(document)) {
+        query.reset();
+      }
       startTransition(() => {
-        dispatch({ type: "close", section, active: activeSection });
-        if (section === activeSection) {
-          router.replace(sectionPath(neighborAfterClose(tabs, section)), {
+        dispatch({ type: "close", document, active: activeDocument });
+        if (document === activeDocument) {
+          router.replace(documentPath(neighborAfterClose(tabs, document)), {
             scroll: false,
           });
         }
       });
     },
-    [activeSection, router, tabs],
+    [activeDocument, query, router, tabs],
   );
 
   const connect = useCallback(() => {
+    const outcomes = connectionOutcomes(activeDocument);
+    if (!outcomes) {
+      return;
+    }
     runIds.current += 1;
     dispatch({
       type: "connect",
-      section: activeSection,
-      run: connectionRun(executeSection(activeSection), {
+      document: activeDocument,
+      run: connectionRun(outcomes, {
         id: runIds.current,
         completedAt: new Date(),
       }),
     });
-  }, [activeSection]);
+  }, [activeDocument]);
+
+  useEffect(() => {
+    function openOnShortcut(event: KeyboardEvent) {
+      if (isNewQueryShortcut(event) && readConnectionStatus() !== "pending") {
+        event.preventDefault();
+        openQuery();
+      }
+    }
+    document.addEventListener("keydown", openOnShortcut);
+    return () => document.removeEventListener("keydown", openOnShortcut);
+  }, [openQuery]);
 
   const value = useMemo(
     () => ({
       tabs,
-      activeSection,
+      activeDocument,
       activeRun,
-      activateSection,
+      query,
+      activateDocument,
       openSection,
-      runSection,
-      closeSection,
+      openQuery,
+      runDocument,
+      closeDocument,
       connect,
     }),
     [
       tabs,
-      activeSection,
+      activeDocument,
       activeRun,
-      activateSection,
+      query,
+      activateDocument,
       openSection,
-      runSection,
-      closeSection,
+      openQuery,
+      runDocument,
+      closeDocument,
       connect,
     ],
   );

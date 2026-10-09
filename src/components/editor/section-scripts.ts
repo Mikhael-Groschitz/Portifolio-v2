@@ -12,17 +12,17 @@ function scriptKey(section: SectionId, locale: Locale): string {
 }
 
 const highlighted = new Map(
-  await Promise.all(
-    CATALOG.flatMap((object) =>
-      LOCALES.map(async (locale) => {
-        const script = sectionScript(
-          object,
-          getTexts(locale).shell.scripts[object.section],
-        );
-        const lines = await highlightTsql(script, identifiers);
-        return [scriptKey(object.section, locale), lines] as const;
-      }),
-    ),
+  CATALOG.flatMap((object) =>
+    LOCALES.map((locale) => {
+      const script = sectionScript(
+        object,
+        getTexts(locale).shell.scripts[object.section],
+      );
+      return [
+        scriptKey(object.section, locale),
+        highlightTsql(script, identifiers),
+      ] as const;
+    }),
   ),
 );
 

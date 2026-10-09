@@ -110,6 +110,15 @@ export function ProcedureIcon(props: Readonly<IconProps>) {
   );
 }
 
+export function KeywordIcon(props: Readonly<IconProps>) {
+  return (
+    <Icon {...props}>
+      <rect x="1.5" y="3.5" width="13" height="9" rx="1" />
+      <path d="M4 6.5h8M4 9.5h5" />
+    </Icon>
+  );
+}
+
 export function NewQueryIcon(props: Readonly<IconProps>) {
   return (
     <Icon {...props}>

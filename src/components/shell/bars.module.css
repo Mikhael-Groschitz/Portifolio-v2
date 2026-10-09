@@ -22,6 +22,34 @@
   border-inline-start: 1px solid var(--status-separator);
 }
 
+.traveling {
+  background: var(--status-time-travel);
+  color: var(--text-on-time-travel);
+}
+
+.tardis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  min-width: 28px;
+  padding-inline: 6px;
+  border: 0;
+  border-inline-start: 1px solid var(--status-separator);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.tardis:hover {
+  color: var(--status-time-travel);
+}
+
+.tardis:focus-visible {
+  outline-color: var(--text-on-status);
+  outline-offset: -3px;
+}
+
 .statusBar {
   display: flex;
   align-items: center;

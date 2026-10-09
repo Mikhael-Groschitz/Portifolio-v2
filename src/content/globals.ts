@@ -304,6 +304,15 @@ export const texts: Record<Locale, Texts> = {
         similarHint: "Dica: você quis dizer {command}?",
         helpHint:
           "Dica: digite HELP para ver as tabelas e os comandos, ou experimente {command}.",
+        offlineHint:
+          "A TARDIS não conseguiu pousar desta vez. O resto do portfólio continua aqui.",
+        dateHint:
+          "Dica: experimente uma data no passado, no formato 'AAAA-MM-DD', como '2025-01-01'.",
+        databaseChanged:
+          "Contexto do banco de dados alterado para '{database}'.",
+        travelFarewell: "Segure firme: a TARDIS está partindo para a versão 1.",
+        returned: "De volta ao presente.",
+        regenerated: "Regeneração concluída. Rosto novo, mesmas memórias.",
         opensInNewTab: "abre em nova aba",
       },
       query: {
@@ -402,8 +411,10 @@ export const texts: Record<Locale, Texts> = {
         executing: "Executando consulta...",
         succeeded: "Consulta executada com êxito.",
         failed: "Consulta concluída com erros.",
+        traveling: "Viajando no tempo até a versão 1...",
         login: { visitor: "visitante", dev: "dev" },
         rows: { one: "{count} linha", other: "{count} linhas" },
+        timeTravel: "Viajar no tempo",
       },
       connect: {
         title: "Conectar ao Servidor",
@@ -775,6 +786,14 @@ export const texts: Record<Locale, Texts> = {
         similarHint: "Tip: did you mean {command}?",
         helpHint:
           "Tip: type HELP to see the tables and commands, or try {command}.",
+        offlineHint:
+          "The TARDIS couldn't land this time. The rest of the portfolio is still here.",
+        dateHint:
+          "Tip: try a date in the past, in the 'YYYY-MM-DD' format, like '2025-01-01'.",
+        databaseChanged: "Changed database context to '{database}'.",
+        travelFarewell: "Hold on tight: the TARDIS is leaving for version 1.",
+        returned: "Back to the present.",
+        regenerated: "Regeneration complete. New face, same memories.",
         opensInNewTab: "opens in a new tab",
       },
       query: {
@@ -872,8 +891,10 @@ export const texts: Record<Locale, Texts> = {
         executing: "Executing query...",
         succeeded: "Query executed successfully.",
         failed: "Query completed with errors.",
+        traveling: "Traveling in time to version 1...",
         login: { visitor: "visitor", dev: "dev" },
         rows: { one: "{count} row", other: "{count} rows" },
+        timeTravel: "Travel in time",
       },
       connect: {
         title: "Connect to Server",

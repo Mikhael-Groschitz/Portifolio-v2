@@ -28,7 +28,7 @@ describe("cheat sheet examples", () => {
       execute(mistake, { locale: "pt-BR", random: () => 0 }),
     ).toMatchObject({
       kind: "error",
-      hint: { command: "SELECT * FROM dbo.Career", similar: true },
+      hint: { kind: "similar", command: "SELECT * FROM dbo.Career" },
     });
   });
 });

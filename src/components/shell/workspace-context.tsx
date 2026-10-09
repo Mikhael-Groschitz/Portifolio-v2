@@ -19,8 +19,9 @@ import {
   createQueryStore,
   queryToRun,
 } from "@/components/editor/query-store";
-import type { Localized } from "@/content/locales";
+import { type Localized, byLocale } from "@/content/locales";
 import { SECTION_IDS, type SectionId } from "@/content/types";
+import { arrivalOutcome } from "@/engine/easter-eggs";
 import type { ExecutionOutcome } from "@/engine/execute";
 import { executeQuery, executeSection } from "./section-execution";
 import {
@@ -32,6 +33,7 @@ import {
 } from "./section-routes";
 import {
   type Run,
+  type RunEffect,
   connectionRun,
   initialWorkspace,
   neighborAfterClose,
@@ -46,6 +48,7 @@ interface WorkspaceContextValue {
   tabs: readonly DocumentId[];
   activeDocument: DocumentId;
   activeRun: Run | null;
+  effect: RunEffect | null;
   query: QueryStore;
   activateDocument: (document: DocumentId) => void;
   openSection: (section: SectionId) => void;
@@ -53,6 +56,7 @@ interface WorkspaceContextValue {
   runDocument: (document: DocumentId) => void;
   closeDocument: (document: DocumentId) => void;
   connect: () => void;
+  arrive: () => void;
 }
 
 const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
@@ -205,6 +209,18 @@ export function WorkspaceProvider({
     });
   }, [activeDocument]);
 
+  const arrive = useCallback(() => {
+    runIds.current += 1;
+    dispatch({
+      type: "connect",
+      document: QUERY_DOCUMENT,
+      run: connectionRun(
+        byLocale(() => arrivalOutcome()),
+        { id: runIds.current, completedAt: new Date() },
+      ),
+    });
+  }, []);
+
   useEffect(() => {
     function openOnShortcut(event: KeyboardEvent) {
       if (isNewQueryShortcut(event) && readConnectionStatus() !== "pending") {
@@ -221,6 +237,7 @@ export function WorkspaceProvider({
       tabs,
       activeDocument,
       activeRun,
+      effect: state.effect,
       query,
       activateDocument,
       openSection,
@@ -228,11 +245,13 @@ export function WorkspaceProvider({
       runDocument,
       closeDocument,
       connect,
+      arrive,
     }),
     [
       tabs,
       activeDocument,
       activeRun,
+      state.effect,
       query,
       activateDocument,
       openSection,
@@ -240,6 +259,7 @@ export function WorkspaceProvider({
       runDocument,
       closeDocument,
       connect,
+      arrive,
     ],
   );
 

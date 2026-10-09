@@ -88,3 +88,7 @@ export function splitStatements(input: string): Statement[] {
   flush();
   return statements;
 }
+
+export function normalizeStatement(text: string): string {
+  return splitStatements(text)[0]?.text ?? "";
+}

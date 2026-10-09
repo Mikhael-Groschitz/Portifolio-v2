@@ -38,6 +38,12 @@ describe("completionAt", () => {
     expect(labels("ca")).toEqual(["dbo.Career"]);
   });
 
+  it("keeps the secrets out of the list", () => {
+    expect(labels("USE Portfolio_")).toBeNull();
+    expect(labels("EXEC sp_Re")).toBeNull();
+    expect(labels("", 0, true)).not.toContain("Portfolio_v1");
+  });
+
   it("stays quiet until there is something to complete", () => {
     expect(labels("")).toBeNull();
     expect(labels("SELECT * ")).toBeNull();

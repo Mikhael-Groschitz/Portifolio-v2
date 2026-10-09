@@ -60,6 +60,11 @@
   --status-separator: #bdbdbd;
   --icon-execute: #84d081;
 
+  /* Easter eggs */
+  --status-time-travel: #003b6f;
+  --text-on-time-travel: #ffffff;
+  --regeneration: #f5c04a;
+
   /* Fonts: system stacks only, nothing embedded */
   --font-code: Consolas, "Cascadia Mono", ui-monospace, monospace;
   --font-ui: "Segoe UI", system-ui, sans-serif;

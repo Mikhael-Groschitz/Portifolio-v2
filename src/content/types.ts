@@ -134,6 +134,12 @@ export interface ResultsText {
   errorHeader: string;
   similarHint: string;
   helpHint: string;
+  offlineHint: string;
+  dateHint: string;
+  databaseChanged: string;
+  travelFarewell: string;
+  returned: string;
+  regenerated: string;
   opensInNewTab: string;
 }
 
@@ -180,8 +186,10 @@ export interface ConnectionText {
   executing: string;
   succeeded: string;
   failed: string;
+  traveling: string;
   login: ByProfile<string>;
   rows: CountText;
+  timeTravel: string;
 }
 
 export interface ConnectText {

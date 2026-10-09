@@ -1,9 +1,10 @@
 import { CATALOG, type CatalogObject, qualifiedName } from "./catalog";
 
-export interface QueryHint {
-  command: string;
-  similar: boolean;
-}
+export type QueryHint =
+  | { kind: "similar"; command: string }
+  | { kind: "help"; command: string }
+  | { kind: "offline" }
+  | { kind: "date" };
 
 const MAX_DISTANCE = 2;
 const MIN_PARTIAL_LENGTH = 4;
@@ -46,6 +47,6 @@ export function hintFor(statement: string): QueryHint {
     words.some((word) => resembles(word, object.name.toLowerCase())),
   );
   return similar
-    ? { command: commandFor(similar), similar: true }
-    : { command: commandFor(CATALOG[0]), similar: false };
+    ? { kind: "similar", command: commandFor(similar) }
+    : { kind: "help", command: commandFor(CATALOG[0]) };
 }

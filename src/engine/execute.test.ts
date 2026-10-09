@@ -190,7 +190,7 @@ describe("execute", () => {
         line: 1,
         message: ERROR_POOL[0].text.en,
       },
-      hint: { command: "SELECT * FROM dbo.About", similar: true },
+      hint: { kind: "similar", command: "SELECT * FROM dbo.About" },
     });
   });
 
@@ -216,7 +216,7 @@ describe("execute", () => {
     expect(outcome).toMatchObject({
       kind: "error",
       error: { line: 4 },
-      hint: { command: "SELECT * FROM dbo.Career", similar: true },
+      hint: { kind: "similar", command: "SELECT * FROM dbo.Career" },
     });
   });
 
@@ -225,7 +225,7 @@ describe("execute", () => {
       execute("<img src=x onerror=alert(1)>", { locale: "en", random: first }),
     ).toMatchObject({
       kind: "error",
-      hint: { command: "SELECT * FROM dbo.About", similar: false },
+      hint: { kind: "help", command: "SELECT * FROM dbo.About" },
     });
   });
 

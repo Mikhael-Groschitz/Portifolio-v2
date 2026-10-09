@@ -25,6 +25,7 @@ const GROUP_LABELS: Record<TokenGroup, string> = {
   intellisense: "IntelliSense",
   syntax: "Sintaxe",
   extra: "Extras exigidos pelos prints",
+  easterEggs: "Easter eggs",
 };
 
 const SAMPLE_SQL = `-- Oi! Este trecho existe só para comparar as cores com os prints do SSMS.

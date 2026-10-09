@@ -1,4 +1,5 @@
 import type { Localized } from "@/content/locales";
+import { V1_DATABASE } from "./catalog";
 
 export const FRANCHISES = [
   "doctor-who",
@@ -18,6 +19,43 @@ export interface ErrorEntry {
 
 export const ERROR_LEVEL = 16;
 export const ERROR_STATE = 1;
+
+export interface FixedError {
+  code: number;
+  level: number;
+  state: number;
+  text: Localized;
+}
+
+export const DATABASE_OFFLINE: FixedError = {
+  code: 942,
+  level: 14,
+  state: 4,
+  text: {
+    "pt-BR": `Não é possível abrir o banco de dados '${V1_DATABASE}' porque ele está offline.`,
+    en: `Database '${V1_DATABASE}' cannot be opened because it is offline.`,
+  },
+};
+
+export const DATE_CONVERSION_FAILED: FixedError = {
+  code: 241,
+  level: ERROR_LEVEL,
+  state: ERROR_STATE,
+  text: {
+    "pt-BR": "Falha ao converter data e/ou hora da cadeia de caracteres.",
+    en: "Conversion failed when converting date and/or time from character string.",
+  },
+};
+
+export const DATE_IN_THE_FUTURE: FixedError = {
+  code: 13542,
+  level: ERROR_LEVEL,
+  state: ERROR_STATE,
+  text: {
+    "pt-BR": "Wibbly-wobbly, timey-wimey... esta data ainda não aconteceu.",
+    en: "Wibbly-wobbly, timey-wimey... this date hasn't happened yet.",
+  },
+};
 
 export const ERROR_POOL: readonly ErrorEntry[] = [
   {

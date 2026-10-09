@@ -1,6 +1,7 @@
 import { formatCompletionTime, formatCount } from "@/content/format";
 import type { ResultsText } from "@/content/types";
 import { type ExecutionOutcome, resultSetsOf } from "@/engine/execute";
+import type { QueryHint } from "@/engine/hints";
 import styles from "./results.module.css";
 
 interface MessagesPaneProps {
@@ -10,6 +11,8 @@ interface MessagesPaneProps {
 }
 
 type ErrorOutcome = Extract<ExecutionOutcome, { kind: "error" }>;
+
+type ResultsOutcome = Extract<ExecutionOutcome, { kind: "results" }>;
 
 function errorLines({ error }: ErrorOutcome, text: ResultsText): string {
   const { number, level, state, line, message } = error;
@@ -21,19 +24,44 @@ function errorLines({ error }: ErrorOutcome, text: ResultsText): string {
   return `${header}\n${message}`;
 }
 
-function hintLine({ hint }: ErrorOutcome, text: ResultsText): string {
-  const template = hint.similar ? text.similarHint : text.helpHint;
-  return template.replace("{command}", hint.command);
+function hintLine(hint: QueryHint, text: ResultsText): string {
+  switch (hint.kind) {
+    case "similar":
+      return text.similarHint.replace("{command}", hint.command);
+    case "help":
+      return text.helpHint.replace("{command}", hint.command);
+    case "offline":
+      return text.offlineHint;
+    case "date":
+      return text.dateHint;
+  }
 }
 
-function resultLines(outcome: ExecutionOutcome, text: ResultsText): string {
-  const resultSets = resultSetsOf(outcome);
-  if (resultSets.length === 0) {
-    return text.commandsCompleted;
+function effectLines(
+  { effect, database }: ResultsOutcome,
+  text: ResultsText,
+): string[] {
+  const changed = text.databaseChanged.replace("{database}", database);
+  switch (effect) {
+    case "travel":
+      return [changed, text.travelFarewell];
+    case "return":
+      return [changed, text.returned];
+    case "regenerate":
+      return [text.regenerated];
+    default:
+      return [];
   }
-  return resultSets
-    .map((resultSet) => formatCount(text.rowsAffected, resultSet.rows.length))
-    .join("\n\n");
+}
+
+function resultLines(outcome: ResultsOutcome, text: ResultsText): string {
+  const blocks = [
+    ...resultSetsOf(outcome).map((resultSet) =>
+      formatCount(text.rowsAffected, resultSet.rows.length),
+    ),
+    effectLines(outcome, text).join("\n"),
+  ].filter(Boolean);
+  return blocks.length > 0 ? blocks.join("\n\n") : text.commandsCompleted;
 }
 
 export function MessagesPane({
@@ -50,7 +78,7 @@ export function MessagesPane({
       {outcome.kind === "error" ? (
         <>
           <span className={styles.error}>{errorLines(outcome, text)}</span>
-          {`\n\n${hintLine(outcome, text)}`}
+          {`\n\n${hintLine(outcome.hint, text)}`}
         </>
       ) : (
         resultLines(outcome, text)

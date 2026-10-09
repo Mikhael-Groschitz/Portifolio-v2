@@ -47,6 +47,7 @@ export const TOKEN_GROUPS = {
     "status-separator",
     "icon-execute",
   ],
+  easterEggs: ["status-time-travel", "text-on-time-travel", "regeneration"],
 } as const;
 
 export type TokenGroup = keyof typeof TOKEN_GROUPS;
@@ -103,6 +104,7 @@ export const CONTRAST_PAIRS: readonly ContrastPair[] = [
   ...textOn("text-on-status", "status-connected"),
   ...textOn("text-on-selection", "selection"),
   ...textOn("grid-row-selected-text", "grid-row-selected"),
+  ...textOn("text-on-time-travel", "status-time-travel"),
   ...textOn("text-error", "bg-messages", "bg-panel"),
   ...textOn("text-success", "bg-messages", "bg-panel", "bg-tabstrip"),
   ...TOKEN_GROUPS.syntax.flatMap((token) => textOn(token, "bg-editor")),
@@ -119,6 +121,8 @@ export const CONTRAST_PAIRS: readonly ContrastPair[] = [
   ),
   ...uiOn("icon-folder", "bg-panel"),
   ...uiOn("icon-execute", "bg-window", "bg-tab-active"),
+  ...uiOn("status-time-travel", "status-connected"),
+  ...uiOn("regeneration", "bg-window", "bg-panel", "bg-editor"),
   ...uiOn("tree-expander-border", "bg-panel"),
   ...uiOn("tree-expander-glyph", "text"),
   ...uiOn(

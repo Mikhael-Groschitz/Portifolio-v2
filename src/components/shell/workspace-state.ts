@@ -1,4 +1,5 @@
-import type { Localized } from "@/content/locales";
+import { DEFAULT_LOCALE, type Localized } from "@/content/locales";
+import type { Effect } from "@/engine/easter-eggs";
 import type { ExecutionOutcome } from "@/engine/execute";
 import type { DocumentId } from "./section-routes";
 
@@ -18,9 +19,15 @@ export interface FinishedRun {
 
 export type Run = PendingRun | FinishedRun;
 
+export interface RunEffect {
+  id: number;
+  kind: Effect;
+}
+
 export interface WorkspaceState {
   tabs: readonly DocumentId[];
   runs: Partial<Record<DocumentId, Run>>;
+  effect: RunEffect | null;
 }
 
 export type WorkspaceAction =
@@ -73,7 +80,15 @@ export function initialWorkspace(
   return {
     tabs: [active],
     runs: outcomes ? { [active]: connectionRun(outcomes) } : {},
+    effect: null,
   };
+}
+
+export function effectOf(run: FinishedRun): RunEffect | null {
+  const outcome = run.outcomes[DEFAULT_LOCALE];
+  return outcome.kind === "results" && outcome.effect
+    ? { id: run.id, kind: outcome.effect }
+    : null;
 }
 
 export function withActive(
@@ -120,6 +135,7 @@ export function workspaceReducer(
         return { ...state, tabs };
       }
       return {
+        ...state,
         tabs: tabs.filter((tab) => tab !== action.document),
         runs: withoutRun(state.runs, action.document),
       };
@@ -139,9 +155,11 @@ export function workspaceReducer(
       return {
         ...state,
         runs: { ...state.runs, [action.document]: action.run },
+        effect: effectOf(action.run) ?? state.effect,
       };
     case "connect":
       return {
+        ...state,
         tabs: withActive(state.tabs, action.document),
         runs: { ...state.runs, [action.document]: action.run },
       };

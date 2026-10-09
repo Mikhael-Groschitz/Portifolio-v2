@@ -318,3 +318,15 @@ export function SpinnerIcon(props: Readonly<IconProps>) {
     </Icon>
   );
 }
+
+export function TardisIcon(props: Readonly<IconProps>) {
+  return (
+    <Icon {...props}>
+      <path
+        className={styles.solid}
+        fillRule="evenodd"
+        d="M7.25.5h1.5V2h-1.5zM5 2h6l1 1.5H4zM4 3.5h8V5H4zm.75.45v.6h6.5v-.6zM4 5h8v9.5H4zm1 1v2h2.5V6zm3.5 0v2H11V6zM7.85 8.75v4.75h.3V8.75zM3.5 14.5h9v1h-9z"
+      />
+    </Icon>
+  );
+}

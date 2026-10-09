@@ -28,6 +28,8 @@ npm run dev
 
 O site abre em `http://localhost:3000`.
 
+Um dos segredos do site leva à versão anterior do portfólio. O endereço dela vem da variável `NEXT_PUBLIC_V1_URL`: copie o `.env.example` para `.env.local` e preencha. Sem a variável, o segredo responde com uma mensagem amigável e ninguém sai da página. Como toda variável `NEXT_PUBLIC_`, ela entra no build, então depois de mudar é preciso reiniciar o `npm run dev` ou gerar o build de novo.
+
 | Comando             | O que faz                          |
 | ------------------- | ---------------------------------- |
 | `npm run dev`       | ambiente de desenvolvimento        |
@@ -64,6 +66,8 @@ src/
 - A URL manda na aba ativa: abrir uma tabela muda o endereço, e voltar, avançar ou recarregar a página leva sempre à aba certa. As abas abertas não se repetem e a última nunca fecha.
 - A execução é simulada por um motor em TypeScript puro (`src/engine/execute.ts`), sem React e sem DOM. Não há parser de SQL: o motor separa o texto em comandos (por `;`, `GO` ou pelo começo de cada comando), ignora maiúsculas, espaços, comentários e colchetes, e procura cada comando num dicionário montado a partir do catálogo. Cada comando reconhecido devolve uma grade; o primeiro desconhecido devolve um erro no formato do SQL Server, com a linha em que está e uma dica de comando válido. A página de cada seção já sai do servidor com a grade preenchida, então o conteúdo está no HTML mesmo sem JavaScript.
 - Os erros vêm de um pool de mensagens com referências a Doctor Who, Super Mario, Portal, Metal Gear Solid e Dark Souls (`src/engine/errors.ts`), em português e em inglês.
+- Os segredos ficam num registro à parte (`src/engine/easter-eggs.ts`), consultado só quando o comando não é um dos conhecidos. Nenhum deles aparece no Pesquisador de Objetos, no HELP, na Colinha ou no autocomplete. O motor só descreve o efeito, e a interface cuida da animação e da navegação, sempre respeitando a preferência por menos movimento.
+- A data de lançamento desta versão, usada por um dos segredos, fica em `V2_LAUNCH_DATE`, no mesmo arquivo. Por enquanto é provisória e muda para a data do deploy.
 - F5 ou Alt+X executam com o foco no editor, como no SSMS; fora dele, o F5 continua recarregando a página. O botão Executar roda o script da aba ativa.
 - A Nova Consulta abre pelo botão da barra de ferramentas, pelo menu Arquivo ou com Alt+N, porque o Chrome e o Edge reservam o Ctrl+N para abrir uma janela. O editor é um campo de texto comum com o T-SQL colorido por cima, nas mesmas cores dos scripts, e um autocomplete próprio que sugere palavras-chave, tabelas e procedures conforme o contexto. Funciona com teclado, leitor de tela e celular. Com um trecho selecionado, F5 executa só a seleção, como no SSMS.
 - A tela de conexão aparece uma vez por sessão. Um script no `<head>` lê o `sessionStorage` antes da primeira pintura e marca o `<html>`; o CSS só mostra o diálogo para quem ainda não conectou. Quem recarrega a página não vê o diálogo piscar, e sem JavaScript o conteúdo aparece direto, sem diálogo.
@@ -94,7 +98,8 @@ src/
 - [x] Nova consulta com autocomplete
 - [x] Guia para quem não conhece SQL
 - [x] SEO e acessibilidade
-- [ ] Easter eggs
+- [x] Versionamento e viagem no tempo
+- [ ] Mini jogo
 - [ ] Publicação
 
 ## Licença

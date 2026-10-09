@@ -24,9 +24,16 @@ const failure: ExecutionOutcome = {
   kind: "error",
   database: "Portfolio",
   error: { number: 404, level: 16, state: 1, line: 1, message: "x" },
-  hint: { command: "SELECT * FROM dbo.About", similar: false },
+  hint: { kind: "help", command: "SELECT * FROM dbo.About" },
 };
 const success: Localized<ExecutionOutcome> = { "pt-BR": rows, en: rows };
+const travel: ExecutionOutcome = {
+  kind: "results",
+  database: "Portfolio_v1",
+  results: [],
+  effect: "travel",
+};
+const departure: Localized<ExecutionOutcome> = { "pt-BR": travel, en: travel };
 const moment = new Date(0);
 
 describe("tabs", () => {
@@ -58,6 +65,7 @@ describe("tabs", () => {
     expect(initialWorkspace("query", null)).toEqual({
       tabs: ["query"],
       runs: {},
+      effect: null,
     });
   });
 
@@ -161,6 +169,58 @@ describe("runs", () => {
       completedAt: moment,
     });
     expect(connected.runs.about).toMatchObject({ id: 0 });
+  });
+});
+
+describe("effects", () => {
+  function finish(
+    state: ReturnType<typeof initialWorkspace>,
+    id: number,
+    outcomes: Localized<ExecutionOutcome>,
+  ) {
+    const started = workspaceReducer(state, {
+      type: "start",
+      document: "query",
+      id,
+    });
+    return workspaceReducer(started, {
+      type: "finish",
+      document: "query",
+      run: userRun(id, outcomes, moment, 150),
+    });
+  }
+
+  it("remembers the effect of the last run that asked for one", () => {
+    const traveled = finish(initialWorkspace("query", null), 4, departure);
+    expect(traveled.effect).toEqual({ id: 4, kind: "travel" });
+    expect(finish(traveled, 5, success).effect).toEqual({
+      id: 4,
+      kind: "travel",
+    });
+  });
+
+  it("ignores the effect of a run that was replaced", () => {
+    const started = workspaceReducer(initialWorkspace("query", null), {
+      type: "start",
+      document: "query",
+      id: 2,
+    });
+    const stale = workspaceReducer(started, {
+      type: "finish",
+      document: "query",
+      run: userRun(1, departure, moment, 150),
+    });
+    expect(stale.effect).toBeNull();
+  });
+
+  it("keeps the effect when tabs close or a connection run arrives", () => {
+    const traveled = finish(initialWorkspace("query", null), 4, departure);
+    const connected = workspaceReducer(traveled, {
+      type: "connect",
+      document: "query",
+      run: connectionRun(success, { id: 5, completedAt: moment }),
+    });
+    expect(connected.effect).toEqual({ id: 4, kind: "travel" });
   });
 });
 

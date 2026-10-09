@@ -1,3 +1,4 @@
+import { V1_URL } from "@/components/easter-eggs/v1-url";
 import { getTexts } from "@/content";
 import { type Localized, byLocale } from "@/content/locales";
 import type { SectionId } from "@/content/types";
@@ -9,7 +10,15 @@ export function executeQuery(
   input: string,
   seed: number,
 ): Localized<ExecutionOutcome> {
-  return byLocale((locale) => execute(input, { locale, random: () => seed }));
+  const now = new Date();
+  return byLocale((locale) =>
+    execute(input, {
+      locale,
+      random: () => seed,
+      now,
+      v1Available: V1_URL !== null,
+    }),
+  );
 }
 
 export function executeSection(

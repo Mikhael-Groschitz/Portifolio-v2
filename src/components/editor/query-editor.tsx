@@ -8,6 +8,7 @@ import {
   type SyntheticEvent,
   useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -153,6 +154,18 @@ export function QueryEditor({
     [snapshot.text],
   );
   const empty = snapshot.text === "";
+
+  useLayoutEffect(() => {
+    const textarea = textareaRef.current;
+    const { selectionStart, selectionEnd } = snapshot;
+    if (
+      textarea &&
+      (textarea.selectionStart !== selectionStart ||
+        textarea.selectionEnd !== selectionEnd)
+    ) {
+      textarea.setSelectionRange(selectionStart, selectionEnd);
+    }
+  }, [snapshot]);
 
   useEffect(() => {
     function focusIfRequested() {

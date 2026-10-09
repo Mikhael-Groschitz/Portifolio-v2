@@ -17,15 +17,15 @@ describe("hints", () => {
     ["exec sp_downloadcvv", "EXEC dbo.sp_DownloadCV"],
     ["SELECT * FROM TechStak", "SELECT * FROM dbo.TechStack"],
   ])("suggests a similar object for %j", (statement, command) => {
-    expect(hintFor(statement)).toEqual({ command, similar: true });
+    expect(hintFor(statement)).toEqual({ kind: "similar", command });
   });
 
   it.each(["drop table users", "olá", "", "< img src = x >"])(
     "falls back to HELP for %j",
     (statement) => {
       expect(hintFor(statement)).toEqual({
+        kind: "help",
         command: "SELECT * FROM dbo.About",
-        similar: false,
       });
     },
   );

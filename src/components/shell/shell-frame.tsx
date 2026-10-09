@@ -13,6 +13,7 @@ import {
 } from "react";
 import { useGuide } from "@/components/cheatsheet/guide-context";
 import { useConnectionStatus } from "@/components/connect/use-connection-status";
+import { useEasterEggs } from "@/components/easter-eggs/easter-egg-context";
 import { COMPACT_MEDIA_QUERY } from "./breakpoints";
 import { useMediaQuery } from "./use-media-query";
 import styles from "./shell.module.css";
@@ -37,6 +38,7 @@ interface ShellFrameProps {
   statusBar: ReactNode;
   tour: ReactNode;
   dialog: ReactNode;
+  timeTravel: ReactNode;
 }
 
 function focusTree(container: HTMLElement | null) {
@@ -58,11 +60,14 @@ export function ShellFrame({
   statusBar,
   tour,
   dialog,
+  timeTravel,
 }: Readonly<ShellFrameProps>) {
   const compact = useMediaQuery(COMPACT_MEDIA_QUERY);
   const connection = useConnectionStatus();
   const { sheetOpen, closeCheatsheet } = useGuide();
+  const { traveling, regenerating } = useEasterEggs();
   const blocked = connection === "pending";
+  const frozen = blocked || traveling;
   const [drawerRequested, setDrawerRequested] = useState(false);
   const explorerOpen = compact && drawerRequested;
   const overlayOpen = explorerOpen || sheetOpen;
@@ -122,8 +127,12 @@ export function ShellFrame({
 
   return (
     <ShellContext value={value}>
-      <div className={styles.shell}>
-        <header className={styles.chrome} inert={overlayOpen || blocked}>
+      <div
+        className={styles.shell}
+        data-traveling={traveling || undefined}
+        data-regenerating={regenerating || undefined}
+      >
+        <header className={styles.chrome} inert={overlayOpen || frozen}>
           {titleBar}
           {toolbar}
         </header>
@@ -132,7 +141,7 @@ export function ShellFrame({
           ref={explorerRef}
           className={styles.explorer}
           data-open={explorerOpen}
-          inert={sheetOpen || blocked}
+          inert={sheetOpen || frozen}
           onKeyDown={handleExplorerKeyDown}
         >
           {explorer}
@@ -145,19 +154,20 @@ export function ShellFrame({
         <div
           ref={workspaceRef}
           className={styles.workspace}
-          inert={overlayOpen || blocked}
+          inert={overlayOpen || frozen}
         >
           {workspace}
         </div>
-        <div className={styles.guide} inert={explorerOpen || blocked}>
+        <div className={styles.guide} inert={explorerOpen || frozen}>
           {guide}
         </div>
-        <div className={styles.status} inert={overlayOpen || blocked}>
+        <div className={styles.status} inert={overlayOpen || frozen}>
           {statusBar}
         </div>
         {tour}
         {dialog}
       </div>
+      {timeTravel}
     </ShellContext>
   );
 }

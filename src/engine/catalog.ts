@@ -8,6 +8,8 @@ export const SERVER = {
 
 export const DATABASE = "Portfolio";
 
+export const V1_DATABASE = "Portfolio_v1";
+
 export const SCHEMA = "dbo";
 
 export type CatalogObjectKind = "table" | "procedure";
@@ -121,6 +123,10 @@ export const CATALOG: readonly CatalogObject[] = [
 
 export function qualifiedName(object: CatalogObject): string {
   return `${SCHEMA}.${object.name}`;
+}
+
+export function objectReferences(name: string): string[] {
+  return [`${SCHEMA}.${name}`, name, `${DATABASE}.${SCHEMA}.${name}`];
 }
 
 export function catalogObject(section: SectionId): CatalogObject {

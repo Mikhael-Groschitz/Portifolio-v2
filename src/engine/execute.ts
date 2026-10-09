@@ -9,11 +9,23 @@ import {
   type CatalogObjectKind,
   DATABASE,
   SCHEMA,
+  objectReferences,
   qualifiedName,
 } from "./catalog";
+import {
+  EASTER_EGGS,
+  type EasterEggContext,
+  type EasterEggOutcome,
+  type Effect,
+  databaseAfter,
+} from "./easter-eggs";
 import { ERROR_LEVEL, ERROR_STATE, pickError } from "./errors";
 import { type QueryHint, commandFor, hintFor } from "./hints";
-import { type Statement, splitStatements } from "./normalize";
+import {
+  type Statement,
+  normalizeStatement,
+  splitStatements,
+} from "./normalize";
 import { sectionQuery } from "./scripts";
 
 export const MAX_QUERY_LENGTH = 10_000;
@@ -46,12 +58,19 @@ export type StatementResult =
   { kind: "rows"; resultSet: ResultSet } | { kind: "done" };
 
 export type ExecutionOutcome =
-  | { kind: "results"; database: string; results: readonly StatementResult[] }
+  | {
+      kind: "results";
+      database: string;
+      results: readonly StatementResult[];
+      effect?: Effect;
+    }
   | { kind: "error"; database: string; error: SqlError; hint: QueryHint };
 
 export interface ExecutionContext {
   locale: Locale;
   random?: () => number;
+  now?: Date;
+  v1Available?: boolean;
 }
 
 type Command = (locale: Locale) => StatementResult[];
@@ -148,11 +167,7 @@ function helpResults(locale: Locale): StatementResult[] {
 }
 
 function objectForms(object: CatalogObject): string[] {
-  const targets = [
-    qualifiedName(object),
-    object.name,
-    `${DATABASE}.${qualifiedName(object)}`,
-  ];
+  const targets = objectReferences(object.name);
   if (object.kind === "procedure") {
     return targets.flatMap((target) => [
       target,
@@ -166,15 +181,11 @@ function objectForms(object: CatalogObject): string[] {
   ];
 }
 
-function statementKey(form: string): string {
-  return splitStatements(form)[0]?.text ?? "";
-}
-
 function entries(
   forms: readonly string[],
   command: Command,
 ): [string, Command][] {
-  return forms.map((form) => [statementKey(form), command]);
+  return forms.map((form) => [normalizeStatement(form), command]);
 }
 
 const COMMANDS = new Map<string, Command>([
@@ -206,6 +217,25 @@ function failure(
   };
 }
 
+function easterEggFailure(
+  statement: Statement,
+  { error, hint }: Extract<EasterEggOutcome, { kind: "error" }>,
+  locale: Locale,
+): ExecutionOutcome {
+  return {
+    kind: "error",
+    database: DATABASE,
+    error: {
+      number: error.code,
+      level: error.level,
+      state: error.state,
+      line: statement.line,
+      message: error.text[locale],
+    },
+    hint,
+  };
+}
+
 export function execute(
   input: string,
   context: ExecutionContext,
@@ -213,15 +243,41 @@ export function execute(
   if (input.length > MAX_QUERY_LENGTH) {
     return failure({ text: "", line: 1 }, context);
   }
+  const { locale, now, v1Available = false } = context;
+  const easterEggContext: EasterEggContext = {
+    now,
+    v1Available,
+    run: (statement) =>
+      COMMANDS.get(normalizeStatement(statement))?.(locale) ?? [],
+  };
   const results: StatementResult[] = [];
+  let effect: Effect | undefined;
   for (const statement of splitStatements(input)) {
     const command = COMMANDS.get(statement.text);
-    if (!command) {
+    if (command) {
+      results.push(...command(locale));
+      continue;
+    }
+    const easterEgg = EASTER_EGGS.find((entry) => entry.match(statement.text));
+    if (!easterEgg) {
       return failure(statement, context);
     }
-    results.push(...command(context.locale));
+    const outcome = easterEgg.run(statement.text, easterEggContext);
+    if (outcome.kind === "error") {
+      return easterEggFailure(statement, outcome, locale);
+    }
+    results.push(...outcome.results);
+    effect = outcome.effect ?? effect;
+    if (effect === "travel") {
+      break;
+    }
   }
-  return { kind: "results", database: DATABASE, results };
+  return {
+    kind: "results",
+    database: databaseAfter(effect),
+    results,
+    ...(effect && { effect }),
+  };
 }
 
 export function resultSetsOf(outcome: ExecutionOutcome): ResultSet[] {

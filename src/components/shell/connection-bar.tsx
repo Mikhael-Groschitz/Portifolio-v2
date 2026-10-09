@@ -5,27 +5,31 @@ import {
   ConnectedIcon,
   SpinnerIcon,
   SuccessIcon,
+  TardisIcon,
   WarningIcon,
 } from "@/components/icons";
 import { ProfileText } from "@/components/connect/profile-text";
+import { useEasterEggs } from "@/components/easter-eggs/easter-egg-context";
 import { LocaleText } from "@/components/locale/locale-text";
 import { formatCount, formatElapsed } from "@/content/format";
 import { type Localized, mapLocalized } from "@/content/locales";
 import { byProfile } from "@/content/profiles";
 import type { ConnectionText } from "@/content/types";
-import { DATABASE, SERVER } from "@/engine/catalog";
+import { DATABASE, SERVER, V1_DATABASE } from "@/engine/catalog";
 import { rowCountOf } from "@/engine/execute";
 import { useWorkspace } from "./workspace-context";
 import type { Run } from "./workspace-state";
 import styles from "./bars.module.css";
 
-type StatusKey = "connected" | "executing" | "succeeded" | "failed";
+type StatusKey =
+  "connected" | "executing" | "succeeded" | "failed" | "traveling";
 
 const STATUS_ICONS: Record<StatusKey, ReactNode> = {
   connected: <ConnectedIcon />,
   executing: <SpinnerIcon />,
   succeeded: <SuccessIcon />,
   failed: <WarningIcon />,
+  traveling: <TardisIcon />,
 };
 
 function statusOf(run: Run | null): StatusKey {
@@ -50,13 +54,20 @@ export function ConnectionBar({
   text,
 }: Readonly<{ text: Localized<ConnectionText> }>) {
   const { activeRun } = useWorkspace();
-  const status = statusOf(activeRun);
+  const { traveling, boardTardis } = useEasterEggs();
+  const status = traveling ? "traveling" : statusOf(activeRun);
   const rows = rowsOf(activeRun);
   const elapsed = elapsedOf(activeRun);
   const rowsText = mapLocalized(text, (bar) => formatCount(bar.rows, rows));
 
   return (
-    <div className={styles.connectionBar}>
+    <div
+      className={
+        traveling
+          ? `${styles.connectionBar} ${styles.traveling}`
+          : styles.connectionBar
+      }
+    >
       <span className={styles.connectionStatus}>
         {STATUS_ICONS[status]}
         <span role="status">
@@ -79,11 +90,19 @@ export function ConnectionBar({
           )}
         />
       </span>
-      <span className={styles.segment}>{DATABASE}</span>
+      <span className={styles.segment}>
+        {traveling ? V1_DATABASE : DATABASE}
+      </span>
       <span className={styles.segment}>{formatElapsed(elapsed)}</span>
       <span className={styles.segment}>
         <LocaleText text={rowsText} />
       </span>
+      <button type="button" className={styles.tardis} onClick={boardTardis}>
+        <TardisIcon />
+        <span className="visually-hidden">
+          <LocaleText text={mapLocalized(text, (bar) => bar.timeTravel)} />
+        </span>
+      </button>
     </div>
   );
 }

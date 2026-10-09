@@ -3,7 +3,7 @@ import { SimpleVersionIcon } from "@/components/icons";
 import { LocaleText } from "@/components/locale/locale-text";
 import { localize } from "@/content";
 import { mapLocalized } from "@/content/locales";
-import { DATABASE } from "@/engine/catalog";
+import { DatabaseSelect } from "./database-select";
 import { ExecuteButton } from "./execute-button";
 import { ExplorerToggle } from "./explorer-toggle";
 import { NewQueryButton } from "./new-query-button";
@@ -25,9 +25,7 @@ export function Toolbar() {
             text={mapLocalized(text, (toolbar) => toolbar.databases)}
           />
         </span>
-        <select className={styles.select} defaultValue={DATABASE}>
-          <option value={DATABASE}>{DATABASE}</option>
-        </select>
+        <DatabaseSelect />
       </label>
       <ExecuteButton label={mapLocalized(text, (toolbar) => toolbar.execute)} />
       <span className={styles.separator} aria-hidden="true" />

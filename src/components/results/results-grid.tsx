@@ -45,36 +45,44 @@ export function ResultsGrid({
   const [selected, setSelected] = useState({ row: 0, column: 0 });
 
   return (
-    <table className={styles.grid}>
+    <table role="table" className={styles.grid}>
       <caption className="visually-hidden">{resultSet.source}</caption>
-      <thead>
-        <tr>
-          <th scope="col" className={styles.rowNumber}>
+      <thead role="rowgroup">
+        <tr role="row">
+          <th role="columnheader" scope="col" className={styles.rowNumber}>
             <span className="visually-hidden">{rowNumberLabel}</span>
           </th>
           {resultSet.columns.map((column) => (
-            <th key={column.name} scope="col">
+            <th key={column.name} role="columnheader" scope="col">
               {column.name}
             </th>
           ))}
         </tr>
       </thead>
-      <tbody>
+      <tbody role="rowgroup">
         {resultSet.rows.map((cells, row) => (
-          <tr key={row}>
-            <th scope="row" className={styles.rowNumber}>
+          <tr key={row} role="row">
+            <th
+              role="rowheader"
+              scope="row"
+              data-label={rowNumberLabel}
+              className={styles.rowNumber}
+            >
               {row + 1}
             </th>
             {cells.map((cell, column) => {
+              const { name, type } = resultSet.columns[column];
               const classes = [
-                resultSet.columns[column].type === "long" ? styles.wrap : "",
+                type === "long" ? styles.wrap : "",
                 selected.row === row && selected.column === column
                   ? styles.selected
                   : "",
               ].filter(Boolean);
               return (
                 <td
-                  key={resultSet.columns[column].name}
+                  key={name}
+                  role="cell"
+                  data-label={name}
                   className={classes.join(" ") || undefined}
                   onClick={() => setSelected({ row, column })}
                 >

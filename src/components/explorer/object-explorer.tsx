@@ -25,9 +25,9 @@ export function ObjectExplorer() {
   return (
     <nav className={styles.panel} aria-labelledby={TITLE_ID}>
       <div className={styles.header}>
-        <span id={TITLE_ID} className={styles.title}>
+        <h2 id={TITLE_ID} className={styles.title}>
           <LocaleText text={mapLocalized(text, (explorer) => explorer.title)} />
-        </span>
+        </h2>
         <span className={styles.grip} aria-hidden="true" />
         <span className={styles.headerIcons} aria-hidden="true">
           <CaretDownIcon />

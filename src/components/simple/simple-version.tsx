@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { LanguageToggle } from "@/components/locale/language-toggle";
 import { LocaleBlocks } from "@/components/locale/locale-blocks";
-import { getTexts } from "@/content";
+import { LocaleText } from "@/components/locale/locale-text";
+import { getTexts, localize } from "@/content";
 import { SimpleContent } from "./simple-content";
 import styles from "./simple.module.css";
 
@@ -13,6 +15,11 @@ export function SimpleVersion() {
   return (
     <main className={styles.page}>
       <div className={styles.toolbar}>
+        <Link href="/" className={styles.fullVersion}>
+          <LocaleText
+            text={localize((texts) => texts.simpleVersion.fullVersion)}
+          />
+        </Link>
         <LanguageToggle labels={switchLanguageLabels} />
       </div>
       <LocaleBlocks>

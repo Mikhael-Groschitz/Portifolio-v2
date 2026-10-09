@@ -81,6 +81,15 @@ export interface SimpleVersionText {
   fullVersion: string;
 }
 
+export type SeoSectionId = Exclude<SectionId, "about">;
+
+export interface SeoText {
+  description: string;
+  sections: Record<SeoSectionId, string>;
+  simple: string;
+  imageAlt: string;
+}
+
 export type MenuId = "file" | "edit" | "view" | "tools" | "window" | "help";
 
 export type MenuItemId =
@@ -115,6 +124,7 @@ export interface MenuText {
 }
 
 export interface ResultsText {
+  heading: string;
   results: string;
   messages: string;
   rowNumber: string;
@@ -236,6 +246,7 @@ export interface ConnectText {
 export interface ShellText {
   windowTitle: string;
   languageName: string;
+  skipToContent: string;
   menu: MenuText;
   toolbar: {
     newQuery: string;
@@ -279,6 +290,7 @@ export interface Texts {
   contact: { intro: string; channels: ContactRow[] };
   resume: ResumeRow;
   simpleVersion: SimpleVersionText;
+  seo: SeoText;
   shell: ShellText;
 }
 

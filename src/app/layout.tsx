@@ -1,18 +1,15 @@
-import type { Metadata } from "next";
 import { CHEATSHEET_SCRIPT } from "@/components/cheatsheet/cheatsheet-runtime";
 import { CONNECTION_SCRIPT } from "@/components/connect/connection-runtime";
+import { DocumentTitle } from "@/components/locale/document-title";
 import { LanguageProvider } from "@/components/locale/language-context";
 import { LOCALE_SCRIPT } from "@/components/locale/locale-runtime";
-import { getTexts } from "@/content";
 import { DEFAULT_LOCALE } from "@/content/locales";
+import { pageTitlesByPath, siteMetadata } from "./site-metadata";
 import "./globals.css";
 
-const { about } = getTexts(DEFAULT_LOCALE);
+export const metadata = siteMetadata();
 
-export const metadata: Metadata = {
-  title: `${about.name} | ${about.role}`,
-  description: "TODO: descrição do site",
-};
+const pageTitles = pageTitlesByPath();
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -23,7 +20,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: CHEATSHEET_SCRIPT }} />
       </head>
       <body>
-        <LanguageProvider>{children}</LanguageProvider>
+        <LanguageProvider>
+          <DocumentTitle titles={pageTitles} />
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

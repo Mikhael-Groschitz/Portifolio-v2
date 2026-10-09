@@ -9,6 +9,10 @@
   background: var(--bg-editor);
 }
 
+.document:focus-visible {
+  outline: none;
+}
+
 @media (max-width: 767px) {
   .document {
     border-inline: 0;

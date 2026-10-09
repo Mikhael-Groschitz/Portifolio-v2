@@ -17,7 +17,9 @@
 }
 
 .title {
+  margin: 0;
   color: var(--text);
+  font: inherit;
   white-space: nowrap;
 }
 

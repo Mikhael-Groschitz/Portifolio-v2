@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { SECTION_IDS } from "@/content/types";
 import {
+  DOCUMENT_IDS,
   HOME_SECTION,
   QUERY_DOCUMENT,
+  byDocument,
   documentFromSegment,
   documentPath,
   isQueryDocument,
@@ -32,6 +34,15 @@ describe("document routes", () => {
     for (const section of SECTION_IDS) {
       expect(documentFromSegment(documentPath(section).slice(1))).toBe(section);
     }
+  });
+
+  it("builds one value for every document", () => {
+    expect(DOCUMENT_IDS).toEqual([...SECTION_IDS, QUERY_DOCUMENT]);
+    expect(byDocument(documentPath)).toEqual(
+      Object.fromEntries(
+        DOCUMENT_IDS.map((document) => [document, `/${document}`]),
+      ),
+    );
   });
 
   it("opens About on the home page and on unknown addresses", () => {

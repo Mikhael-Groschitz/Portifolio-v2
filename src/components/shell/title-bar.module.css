@@ -7,6 +7,24 @@
   background: var(--bg-window);
 }
 
+.skipLink {
+  position: fixed;
+  inset-block-start: 6px;
+  inset-inline-start: 6px;
+  z-index: 70;
+  padding: 6px 12px;
+  border: 1px solid var(--focus-ring);
+  border-radius: 4px;
+  background: var(--bg-panel);
+  color: var(--text);
+  text-decoration: none;
+  translate: 0 -200%;
+}
+
+.skipLink:focus {
+  translate: none;
+}
+
 .appIcon {
   margin-inline-end: 6px;
 }

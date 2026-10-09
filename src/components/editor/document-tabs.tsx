@@ -27,6 +27,20 @@ interface DocumentTabsProps {
   queryName: Localized;
 }
 
+function revealInStrip(tab: HTMLElement) {
+  const strip = tab.closest<HTMLElement>('[role="tablist"]');
+  if (!strip) {
+    return;
+  }
+  const tabBox = tab.getBoundingClientRect();
+  const stripBox = strip.getBoundingClientRect();
+  if (tabBox.left < stripBox.left) {
+    strip.scrollLeft -= stripBox.left - tabBox.left;
+  } else if (tabBox.right > stripBox.right) {
+    strip.scrollLeft += tabBox.right - stripBox.right;
+  }
+}
+
 function TabName({
   document,
   queryName,
@@ -51,9 +65,10 @@ export function DocumentTabs({
     focusedId !== null && tabs.includes(focusedId) ? focusedId : activeDocument;
 
   useEffect(() => {
-    tabRefs.current
-      .get(activeDocument)
-      ?.scrollIntoView({ block: "nearest", inline: "nearest" });
+    const tab = tabRefs.current.get(activeDocument)?.parentElement;
+    if (tab) {
+      revealInStrip(tab);
+    }
   }, [activeDocument]);
 
   function focusTab(document: DocumentId | undefined) {

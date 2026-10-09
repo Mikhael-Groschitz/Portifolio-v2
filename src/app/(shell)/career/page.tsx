@@ -1,7 +1,7 @@
+import { pageMetadata } from "@/app/site-metadata";
 import { SectionDocument } from "@/components/editor/section-document";
-import { sectionMetadata } from "../section-metadata";
 
-export const metadata = sectionMetadata("career");
+export const metadata = pageMetadata("career");
 
 export default function CareerPage() {
   return <SectionDocument section="career" />;

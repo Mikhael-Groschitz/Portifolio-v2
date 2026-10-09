@@ -40,7 +40,7 @@ export const texts: Record<Locale, Texts> = {
     career: [
       {
         company: "Credware Tecnologia (Cliente: Facta Financeira)",
-        role: "Engenheiro de dados | Analista Back End",
+        role: "Analista de dados backend",
         startDate: "2026-03",
         endDate: null,
         description:
@@ -181,9 +181,31 @@ export const texts: Record<Locale, Texts> = {
       switchLanguage: "English",
       fullVersion: "Ver a versão completa",
     },
+    seo: {
+      description:
+        "Portfólio de {name}, analista de dados backend na Credware, com pós-graduação pela PUCPR em Arquitetura de Software, Ciência de Dados e Cybersegurança.",
+      sections: {
+        "tech-stack":
+          "As tecnologias com que {name} trabalha, das linguagens à modelagem de dados: SQL Server, T-SQL, Python, Airflow, Azure, Power BI e mais.",
+        career:
+          "A trajetória profissional de {name}, do trabalho mais recente para o mais antigo.",
+        projects:
+          "Projetos de engenharia de dados de {name}: pipelines ELT na Azure, CDC do SQL Server para um data warehouse, data lakehouse e mais, com links para o código.",
+        "beyond-the-terminal":
+          "Um pouco do que {name} faz longe do trabalho: projetos para a comunidade de jogos, homelab e Magic: The Gathering.",
+        contact:
+          "Os canais de contato de {name}: e-mail, WhatsApp, LinkedIn, GitHub e Dev.to.",
+        resume: "O currículo de {name} em PDF, pronto para baixar.",
+      },
+      simple:
+        "A versão simples do portfólio de {name}: o mesmo conteúdo numa página só, sem a brincadeira do banco de dados.",
+      imageAlt:
+        "Cartão do portfólio de {name}, desenhado como uma janela de banco de dados em tema escuro.",
+    },
     shell: {
       windowTitle: "Portfolio Management Studio",
       languageName: "Português",
+      skipToContent: "Pular para o conteúdo",
       menu: {
         label: "Menu principal",
         more: "Mais menus",
@@ -267,6 +289,7 @@ export const texts: Record<Locale, Texts> = {
         ],
       },
       results: {
+        heading: "Resultado da consulta",
         results: "Resultados",
         messages: "Mensagens",
         rowNumber: "Linha",
@@ -490,7 +513,7 @@ export const texts: Record<Locale, Texts> = {
     career: [
       {
         company: "Credware Technology (Client: Facta Financeira)",
-        role: "Data Engineer | Back End Analyst",
+        role: "Backend Data Analyst",
         startDate: "2026-03",
         endDate: null,
         description:
@@ -630,9 +653,31 @@ export const texts: Record<Locale, Texts> = {
       switchLanguage: "Português",
       fullVersion: "See the full version",
     },
+    seo: {
+      description:
+        "Portfolio of {name}, backend data analyst at Credware, with a postgraduate degree from PUCPR in Software Architecture, Data Science and Cybersecurity.",
+      sections: {
+        "tech-stack":
+          "The technologies {name} works with, from languages to data modeling: SQL Server, T-SQL, Python, Airflow, Azure, Power BI and more.",
+        career:
+          "The career path of {name}, from the most recent job to the oldest.",
+        projects:
+          "Data engineering projects by {name}: ELT pipelines on Azure, SQL Server CDC into a data warehouse, a data lakehouse and more, with links to the code.",
+        "beyond-the-terminal":
+          "A bit of what {name} does away from work: projects for the gaming community, a homelab and Magic: The Gathering.",
+        contact:
+          "How to reach {name}: email, WhatsApp, LinkedIn, GitHub and Dev.to.",
+        resume: "The resume of {name} as a PDF, ready to download.",
+      },
+      simple:
+        "The simple version of {name}'s portfolio: the same content on a single page, minus the database make-believe.",
+      imageAlt:
+        "Share card for {name}'s portfolio, drawn as a dark database window.",
+    },
     shell: {
       windowTitle: "Portfolio Management Studio",
       languageName: "English",
+      skipToContent: "Skip to content",
       menu: {
         label: "Main menu",
         more: "More menus",
@@ -716,6 +761,7 @@ export const texts: Record<Locale, Texts> = {
         ],
       },
       results: {
+        heading: "Query results",
         results: "Results",
         messages: "Messages",
         rowNumber: "Row",

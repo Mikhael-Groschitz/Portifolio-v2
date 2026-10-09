@@ -35,12 +35,13 @@ const VIEW_CLASSES: Record<ResultsView, string> = {
 };
 
 interface ResultsPanelProps {
-  labels: Record<ResultsView, Localized>;
+  labels: Record<ResultsView | "heading", Localized>;
   text: Localized<ResultsText>;
 }
 
 interface RunViewsProps extends ResultsPanelProps {
   run: Run;
+  headingId: string;
 }
 
 function viewsOf(run: Run): readonly ResultsView[] {
@@ -52,7 +53,7 @@ function viewsOf(run: Run): readonly ResultsView[] {
   return hasGrids ? VIEWS : ["messages"];
 }
 
-function RunViews({ run, labels, text }: Readonly<RunViewsProps>) {
+function RunViews({ run, headingId, labels, text }: Readonly<RunViewsProps>) {
   const baseId = useId();
   const loadedAt = useLoadedAt();
   const views = viewsOf(run);
@@ -115,7 +116,12 @@ function RunViews({ run, labels, text }: Readonly<RunViewsProps>) {
 
   return (
     <>
-      <div role="tablist" className={styles.tabs} onKeyDown={handleKeyDown}>
+      <div
+        role="tablist"
+        aria-labelledby={headingId}
+        className={styles.tabs}
+        onKeyDown={handleKeyDown}
+      >
         {views.map((view) => (
           <button
             key={view}
@@ -160,14 +166,19 @@ function RunViews({ run, labels, text }: Readonly<RunViewsProps>) {
 
 export function ResultsPanel(props: Readonly<ResultsPanelProps>) {
   const { activeDocument, activeRun } = useWorkspace();
+  const headingId = useId();
   if (!activeRun) {
     return null;
   }
   return (
     <div className={styles.panel} data-tour="results">
+      <h2 id={headingId} className="visually-hidden">
+        <LocaleText text={props.labels.heading} />
+      </h2>
       <RunViews
         key={`${activeDocument}-${activeRun.id}`}
         run={activeRun}
+        headingId={headingId}
         {...props}
       />
     </div>

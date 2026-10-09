@@ -8,7 +8,7 @@ A versão atual continua no ar em [mgroschitz.dev](https://mgroschitz.dev) enqua
 
 ## Status
 
-Em construção. Na primeira visita de cada sessão aparece a tela Conectar ao Servidor: um clique em Conectar (ou um Enter) abre a janela do SSMS com a tabela da página já executada. Lá dentro, cada tabela do Object Explorer abre o próprio script T-SQL numa aba e executa na hora. A grade mostra os dados, a aba de mensagens mostra as linhas afetadas e o horário de conclusão, e a barra amarela acompanha o resultado. Cada seção tem o seu endereço (`/about`, `/tech-stack`, `/career`, `/projects`, `/beyond-the-terminal`, `/contact` e `/resume`), e a procedure `sp_DownloadCV` entrega o currículo em PDF. Para quem quer escrever as próprias consultas, a Nova Consulta (`/query`) tem destaque de sintaxe, autocomplete e o comando `HELP`. Para quem não conhece SQL, a Colinha lista as seções com um clique e traz exemplos prontos, e um tour de três passos mostra onde clicar. Também existem a paleta de cores (`/palette`) e a versão simples (`/simple`) com o conteúdo do portfólio.
+Em construção. Na primeira visita de cada sessão aparece a tela Conectar ao Servidor: um clique em Conectar (ou um Enter) abre a janela do SSMS com a tabela da página já executada. Lá dentro, cada tabela do Object Explorer abre o próprio script T-SQL numa aba e executa na hora. A grade mostra os dados, a aba de mensagens mostra as linhas afetadas e o horário de conclusão, e a barra amarela acompanha o resultado. Cada seção tem o seu endereço (`/about`, `/tech-stack`, `/career`, `/projects`, `/beyond-the-terminal`, `/contact` e `/resume`), e a procedure `sp_DownloadCV` entrega o currículo em PDF. Para quem quer escrever as próprias consultas, a Nova Consulta (`/query`) tem destaque de sintaxe, autocomplete e o comando `HELP`. Para quem não conhece SQL, a Colinha lista as seções com um clique e traz exemplos prontos, e um tour de três passos mostra onde clicar. Também existem a paleta de cores (`/palette`) e a versão simples (`/simple`) com o conteúdo do portfólio, que volta para a janela com um clique. Cada página tem título, descrição e imagem de compartilhamento próprios, e o site tem `sitemap.xml` e `robots.txt`. Dá para navegar só pelo teclado ou com leitor de tela, e no celular a grade vira cartões.
 
 ## Stack
 
@@ -72,6 +72,12 @@ src/
 - A Colinha, inspirada no Template Explorer do SSMS, fica à direita em telas largas e vira um painel que sobe de baixo nas menores. As seções são links de verdade, então funcionam até sem JavaScript; os exemplos vão para a Nova Consulta. Aberta ou recolhida, ela lembra a escolha durante a sessão, decidida pelo mesmo script do `<head>`, sem piscar.
 - O tour tem três passos e aparece uma vez por sessão, logo depois de conectar. O primeiro passo avança sozinho quando a pessoa abre uma tabela; Pular ou Esc fecham, e o menu Ajuda reinicia. Até a primeira tabela aberta, a pasta Tabelas pulsa de leve (ou fica só destacada, para quem prefere menos movimento).
 - Em Opções, "Usar cor personalizada" muda de verdade a cor da barra de conexão durante a sessão, com o texto em preto ou branco conforme o contraste. `Language=en` nos parâmetros adicionais troca o idioma do site ao conectar.
+- Título, descrição e endereço canônico de cada página saem de `src/app/site-metadata.ts`, a partir dos mesmos textos do site. `/` e `/about` mostram a mesma tabela, então `/about` aponta para `/` como endereço canônico. O sitemap lista só as páginas que devem aparecer na busca; a Nova Consulta e a paleta ficam de fora.
+- Os metadados saem em português, o idioma padrão. O título da aba acompanha o idioma escolhido, inclusive ao navegar e ao recarregar.
+- A imagem de compartilhamento é gerada no build com o `ImageResponse` do próprio Next.js. Ela imita a janela do site e usa as cores do `tokens.css`.
+- Cada página tem um `h1`, visível só para leitores de tela, e as regiões têm títulos: Pesquisador de Objetos, Resultado da consulta e Colinha. O primeiro Tab mostra o link "Pular para o conteúdo". Depois de executar, a barra amarela anuncia o resultado com o número de linhas.
+- No celular, cada linha da grade vira um cartão, com o nome da coluna ao lado do valor e os textos longos logo abaixo. Para leitores de tela, continua sendo uma tabela.
+- Animações e transições respeitam a preferência por menos movimento.
 - Os scripts são montados a partir do catálogo de objetos (`src/engine/catalog.ts`), o mesmo que alimenta a árvore, e coloridos pelo Shiki com o motor de expressões regulares em JavaScript, sem WASM. Por cima do Shiki há um ajuste: nomes de coluna como `Role` e `Description` voltam à cor de identificador, e `AND`, `OR`, `LIKE` e a pontuação ficam cinza, como no SSMS.
 - Nada do que o visitante digita é executado como código.
 - Ícones próprios em SVG, sem marcas da Microsoft.
@@ -87,7 +93,7 @@ src/
 - [x] Tela de conexão
 - [x] Nova consulta com autocomplete
 - [x] Guia para quem não conhece SQL
-- [ ] SEO e acessibilidade
+- [x] SEO e acessibilidade
 - [ ] Easter eggs
 - [ ] Publicação
 

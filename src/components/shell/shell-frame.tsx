@@ -123,10 +123,10 @@ export function ShellFrame({
   return (
     <ShellContext value={value}>
       <div className={styles.shell}>
-        <div className={styles.chrome} inert={overlayOpen || blocked}>
+        <header className={styles.chrome} inert={overlayOpen || blocked}>
           {titleBar}
           {toolbar}
-        </div>
+        </header>
         <div
           id={EXPLORER_ID}
           ref={explorerRef}

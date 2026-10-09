@@ -1,7 +1,7 @@
+import { pageMetadata } from "@/app/site-metadata";
 import { SectionDocument } from "@/components/editor/section-document";
-import { sectionMetadata } from "../section-metadata";
 
-export const metadata = sectionMetadata("contact");
+export const metadata = pageMetadata("contact");
 
 export default function ContactPage() {
   return <SectionDocument section="contact" />;

@@ -93,10 +93,10 @@ export function CheatsheetPanel({
           {label((entry) => entry.title)}
         </span>
       </button>
-      <aside
+      <div
         id={CHEATSHEET_ID}
-        role={sheet ? "dialog" : undefined}
-        aria-modal={sheet || undefined}
+        role={sheetOpen ? "dialog" : "complementary"}
+        aria-modal={sheetOpen || undefined}
         aria-labelledby={titleId}
         className={styles.panel}
         data-sheet-open={sheetOpen}
@@ -177,7 +177,7 @@ export function CheatsheetPanel({
             ))}
           </ul>
         </div>
-      </aside>
+      </div>
     </>
   );
 }

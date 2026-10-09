@@ -5,13 +5,17 @@ import { LocaleText } from "@/components/locale/locale-text";
 import { localize } from "@/content";
 import { byLocale } from "@/content/locales";
 import { MenuBar } from "./menu-bar";
+import { CONTENT_ID } from "./workspace";
 import styles from "./title-bar.module.css";
 
 export function TitleBar() {
   const languageNames = localize((texts) => texts.shell.languageName);
 
   return (
-    <header className={styles.titleBar}>
+    <div className={styles.titleBar}>
+      <a href={`#${CONTENT_ID}`} className={styles.skipLink}>
+        <LocaleText text={localize((texts) => texts.shell.skipToContent)} />
+      </a>
       <AppIcon size={20} className={styles.appIcon} />
       <MenuBar
         text={localize((texts) => texts.shell.menu)}
@@ -24,6 +28,6 @@ export function TitleBar() {
         labels={byLocale((locale) => languageNames[nextLocale(locale)])}
         className={styles.language}
       />
-    </header>
+    </div>
   );
 }

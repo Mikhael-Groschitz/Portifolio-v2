@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/app/site-metadata";
 import { QueryEditor } from "@/components/editor/query-editor";
-import { getTexts, localize } from "@/content";
-import { DEFAULT_LOCALE } from "@/content/locales";
-
-const { about, shell } = getTexts(DEFAULT_LOCALE);
+import { localize } from "@/content";
 
 export const metadata: Metadata = {
-  title: `${shell.query.editorLabel} | ${about.name}`,
+  ...pageMetadata("query"),
   robots: { index: false },
 };
 

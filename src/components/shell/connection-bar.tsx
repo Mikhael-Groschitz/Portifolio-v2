@@ -53,6 +53,7 @@ export function ConnectionBar({
   const status = statusOf(activeRun);
   const rows = rowsOf(activeRun);
   const elapsed = elapsedOf(activeRun);
+  const rowsText = mapLocalized(text, (bar) => formatCount(bar.rows, rows));
 
   return (
     <div className={styles.connectionBar}>
@@ -60,6 +61,12 @@ export function ConnectionBar({
         {STATUS_ICONS[status]}
         <span role="status">
           <LocaleText text={mapLocalized(text, (bar) => bar[status])} />
+          {status === "succeeded" && (
+            <span className="visually-hidden">
+              {" "}
+              <LocaleText text={rowsText} />
+            </span>
+          )}
         </span>
       </span>
       <span className={`${styles.segment} ${styles.detail}`}>
@@ -75,9 +82,7 @@ export function ConnectionBar({
       <span className={styles.segment}>{DATABASE}</span>
       <span className={styles.segment}>{formatElapsed(elapsed)}</span>
       <span className={styles.segment}>
-        <LocaleText
-          text={mapLocalized(text, (bar) => formatCount(bar.rows, rows))}
-        />
+        <LocaleText text={rowsText} />
       </span>
     </div>
   );

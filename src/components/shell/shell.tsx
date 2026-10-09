@@ -1,4 +1,7 @@
 import type { ReactNode } from "react";
+import { CheatsheetPanel } from "@/components/cheatsheet/cheatsheet-panel";
+import { GuideProvider } from "@/components/cheatsheet/guide-context";
+import { Tour } from "@/components/cheatsheet/tour";
 import { ConnectDialog } from "@/components/connect/connect-dialog";
 import { ObjectExplorer } from "@/components/explorer/object-explorer";
 import { localize } from "@/content";
@@ -12,19 +15,27 @@ import { WorkspaceProvider } from "./workspace-context";
 export function Shell({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <WorkspaceProvider>
-      <ShellFrame
-        titleBar={<TitleBar />}
-        toolbar={<Toolbar />}
-        explorer={<ObjectExplorer />}
-        workspace={<Workspace>{children}</Workspace>}
-        statusBar={<StatusBar />}
-        dialog={
-          <ConnectDialog
-            text={localize((texts) => texts.shell.connect)}
-            login={localize((texts) => texts.shell.connection.login)}
-          />
-        }
-      />
+      <GuideProvider>
+        <ShellFrame
+          titleBar={<TitleBar />}
+          toolbar={<Toolbar />}
+          explorer={<ObjectExplorer />}
+          workspace={<Workspace>{children}</Workspace>}
+          guide={
+            <CheatsheetPanel
+              text={localize((texts) => texts.shell.cheatsheet)}
+            />
+          }
+          statusBar={<StatusBar />}
+          tour={<Tour text={localize((texts) => texts.shell.tour)} />}
+          dialog={
+            <ConnectDialog
+              text={localize((texts) => texts.shell.connect)}
+              login={localize((texts) => texts.shell.connection.login)}
+            />
+          }
+        />
+      </GuideProvider>
     </WorkspaceProvider>
   );
 }

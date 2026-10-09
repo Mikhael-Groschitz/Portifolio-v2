@@ -11,6 +11,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useGuide } from "@/components/cheatsheet/guide-context";
 import { useConnectionStatus } from "@/components/connect/use-connection-status";
 import { COMPACT_MEDIA_QUERY } from "./breakpoints";
 import { useMediaQuery } from "./use-media-query";
@@ -32,7 +33,9 @@ interface ShellFrameProps {
   toolbar: ReactNode;
   explorer: ReactNode;
   workspace: ReactNode;
+  guide: ReactNode;
   statusBar: ReactNode;
+  tour: ReactNode;
   dialog: ReactNode;
 }
 
@@ -51,14 +54,18 @@ export function ShellFrame({
   toolbar,
   explorer,
   workspace,
+  guide,
   statusBar,
+  tour,
   dialog,
 }: Readonly<ShellFrameProps>) {
   const compact = useMediaQuery(COMPACT_MEDIA_QUERY);
   const connection = useConnectionStatus();
+  const { sheetOpen, closeCheatsheet } = useGuide();
   const blocked = connection === "pending";
   const [drawerRequested, setDrawerRequested] = useState(false);
   const explorerOpen = compact && drawerRequested;
+  const overlayOpen = explorerOpen || sheetOpen;
   const explorerRef = useRef<HTMLDivElement>(null);
   const workspaceRef = useRef<HTMLDivElement>(null);
   const wasBlocked = useRef(false);
@@ -116,7 +123,7 @@ export function ShellFrame({
   return (
     <ShellContext value={value}>
       <div className={styles.shell}>
-        <div className={styles.chrome} inert={explorerOpen || blocked}>
+        <div className={styles.chrome} inert={overlayOpen || blocked}>
           {titleBar}
           {toolbar}
         </div>
@@ -125,26 +132,30 @@ export function ShellFrame({
           ref={explorerRef}
           className={styles.explorer}
           data-open={explorerOpen}
-          inert={blocked}
+          inert={sheetOpen || blocked}
           onKeyDown={handleExplorerKeyDown}
         >
           {explorer}
         </div>
         <div
           className={styles.backdrop}
-          hidden={!explorerOpen}
-          onClick={closeExplorer}
+          hidden={!overlayOpen}
+          onClick={explorerOpen ? closeExplorer : closeCheatsheet}
         />
         <div
           ref={workspaceRef}
           className={styles.workspace}
-          inert={explorerOpen || blocked}
+          inert={overlayOpen || blocked}
         >
           {workspace}
         </div>
-        <div className={styles.status} inert={explorerOpen || blocked}>
+        <div className={styles.guide} inert={explorerOpen || blocked}>
+          {guide}
+        </div>
+        <div className={styles.status} inert={overlayOpen || blocked}>
           {statusBar}
         </div>
+        {tour}
         {dialog}
       </div>
     </ShellContext>

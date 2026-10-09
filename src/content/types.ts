@@ -143,6 +143,28 @@ export interface QueryText {
   };
 }
 
+export interface CheatsheetText {
+  title: string;
+  close: string;
+  intro: string;
+  sectionsTitle: string;
+  sections: Record<SectionId, string>;
+  exploreTitle: string;
+  exploreIntro: string;
+  examples: { command: string; description: string }[];
+}
+
+export type TourStepId = "tables" | "results" | "query";
+
+export interface TourText {
+  progress: string;
+  skip: string;
+  next: string;
+  done: string;
+  steps: Record<TourStepId, { title: string; text: string }>;
+  compactTablesText: string;
+}
+
 export interface ConnectionText {
   connected: string;
   executing: string;
@@ -239,6 +261,8 @@ export interface ShellText {
   scripts: Record<SectionId, string[]>;
   results: ResultsText;
   query: QueryText;
+  cheatsheet: CheatsheetText;
+  tour: TourText;
   connection: ConnectionText;
   connect: ConnectText;
   status: {

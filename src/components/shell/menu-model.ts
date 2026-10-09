@@ -1,6 +1,11 @@
 import type { MenuId, MenuItemId } from "@/content/types";
 
-export type MenuCommand = "newQuery" | "showExplorer" | "switchLanguage";
+export type MenuCommand =
+  | "newQuery"
+  | "showExplorer"
+  | "switchLanguage"
+  | "openCheatsheet"
+  | "startTour";
 
 export const NEW_QUERY_SHORTCUT = "Alt+N";
 
@@ -75,8 +80,11 @@ export const MENUS: readonly MenuDefinition[] = [
   {
     id: "help",
     entries: [
-      { id: "cheatsheet" },
-      { id: "tour" },
+      {
+        id: "cheatsheet",
+        action: { kind: "command", command: "openCheatsheet" },
+      },
+      { id: "tour", action: { kind: "command", command: "startTour" } },
       SEPARATOR,
       { id: "simpleVersion", action: { kind: "link", href: "/simple" } },
     ],

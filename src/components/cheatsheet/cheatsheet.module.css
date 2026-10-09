@@ -1,0 +1,194 @@
+.edgeTab {
+  display: none;
+}
+
+.panel {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  max-height: min(75dvh, 560px);
+  border-block-start: 2px solid var(--accent);
+  background: var(--bg-panel);
+  transform: translateY(100%);
+  visibility: hidden;
+  transition:
+    transform 150ms ease-out,
+    visibility 0s linear 150ms;
+}
+
+.panel[data-sheet-open="true"] {
+  transform: none;
+  visibility: visible;
+  transition:
+    transform 150ms ease-out,
+    visibility 0s;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  padding-inline: 8px 4px;
+}
+
+.title {
+  margin: 0;
+  color: var(--text);
+  font-size: inherit;
+  font-weight: normal;
+  white-space: nowrap;
+}
+
+.grip {
+  flex: 1;
+  height: 5px;
+  background-image: radial-gradient(var(--text-disabled) 1px, transparent 1px);
+  background-size: 4px 4px;
+}
+
+.headerIcons {
+  display: flex;
+  gap: 4px;
+  color: var(--icon);
+}
+
+.close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--icon);
+}
+
+.close:hover {
+  background: var(--bg-tab-active);
+}
+
+.close:focus-visible {
+  outline-offset: -2px;
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 2px 10px 12px;
+}
+
+.intro {
+  margin: 4px 0 8px;
+  color: var(--text-muted);
+}
+
+.heading {
+  margin: 14px 0 4px;
+  color: var(--text);
+  font-size: inherit;
+  font-weight: 600;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  padding: 6px;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+  cursor: default;
+}
+
+.item:hover {
+  background: var(--bg-tab-active);
+}
+
+.item:focus-visible {
+  outline-offset: -2px;
+}
+
+.itemIcon {
+  display: flex;
+  padding-block-start: 2px;
+  color: var(--icon);
+}
+
+.itemText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.itemCode {
+  color: var(--text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 1100px) {
+  .edgeTab {
+    align-self: flex-start;
+    padding: 10px 2px;
+    border: 1px solid var(--border);
+    background: var(--bg-tabstrip);
+    color: var(--text-muted);
+    font: inherit;
+    cursor: default;
+  }
+
+  .edgeTab:hover {
+    color: var(--text);
+  }
+
+  .edgeLabel {
+    writing-mode: vertical-rl;
+  }
+
+  :global(html[data-cheatsheet="closed"]) .edgeTab {
+    display: flex;
+  }
+
+  .panel {
+    position: static;
+    display: none;
+    width: 264px;
+    max-height: none;
+    border: 1px solid var(--border);
+    border-block-start: 2px solid var(--accent);
+    transform: none;
+    visibility: inherit;
+    transition: none;
+  }
+
+  :global(html:not([data-cheatsheet="closed"])) .panel {
+    display: flex;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .panel[data-sheet-open="true"] {
+    transition: none;
+  }
+}

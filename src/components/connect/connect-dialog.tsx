@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useGuide } from "@/components/cheatsheet/guide-context";
 import { CloseIcon, PlugIcon, SpinnerIcon } from "@/components/icons";
 import { useLanguage } from "@/components/locale/language-context";
 import { LocaleText } from "@/components/locale/locale-text";
@@ -88,6 +89,7 @@ function ConnectWindow({
   const router = useRouter();
   const { locale, setLocale } = useLanguage();
   const { connect } = useWorkspace();
+  const { afterConnect } = useGuide();
   const compact = useMediaQuery(COMPACT_MEDIA_QUERY);
   const titleId = useId();
   const helpId = useId();
@@ -134,6 +136,7 @@ function ConnectWindow({
     }
     connect();
     applyConnection(record);
+    afterConnect(record.profile);
   }
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {

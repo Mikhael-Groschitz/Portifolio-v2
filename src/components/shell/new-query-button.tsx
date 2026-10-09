@@ -15,6 +15,7 @@ export function NewQueryButton({ label }: Readonly<{ label: Localized }>) {
       type="button"
       className={styles.button}
       aria-keyshortcuts={NEW_QUERY_SHORTCUT}
+      data-tour="new-query"
       onClick={openQuery}
     >
       <NewQueryIcon />

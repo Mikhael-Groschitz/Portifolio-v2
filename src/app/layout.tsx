@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { CHEATSHEET_SCRIPT } from "@/components/cheatsheet/cheatsheet-runtime";
 import { CONNECTION_SCRIPT } from "@/components/connect/connection-runtime";
 import { LanguageProvider } from "@/components/locale/language-context";
 import { LOCALE_SCRIPT } from "@/components/locale/locale-runtime";
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: LOCALE_SCRIPT }} />
         <script dangerouslySetInnerHTML={{ __html: CONNECTION_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: CHEATSHEET_SCRIPT }} />
       </head>
       <body>
         <LanguageProvider>{children}</LanguageProvider>

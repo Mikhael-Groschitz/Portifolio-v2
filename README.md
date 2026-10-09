@@ -8,7 +8,7 @@ A versão atual continua no ar em [mgroschitz.dev](https://mgroschitz.dev) enqua
 
 ## Status
 
-Em construção. Na primeira visita de cada sessão aparece a tela Conectar ao Servidor: um clique em Conectar (ou um Enter) abre a janela do SSMS com a tabela da página já executada. Lá dentro, cada tabela do Object Explorer abre o próprio script T-SQL numa aba e executa na hora. A grade mostra os dados, a aba de mensagens mostra as linhas afetadas e o horário de conclusão, e a barra amarela acompanha o resultado. Cada seção tem o seu endereço (`/about`, `/tech-stack`, `/career`, `/projects`, `/beyond-the-terminal`, `/contact` e `/resume`), e a procedure `sp_DownloadCV` entrega o currículo em PDF. Para quem quer escrever as próprias consultas, a Nova Consulta (`/query`) tem destaque de sintaxe, autocomplete e o comando `HELP`. Também existem a paleta de cores (`/palette`) e a versão simples (`/simple`) com o conteúdo do portfólio.
+Em construção. Na primeira visita de cada sessão aparece a tela Conectar ao Servidor: um clique em Conectar (ou um Enter) abre a janela do SSMS com a tabela da página já executada. Lá dentro, cada tabela do Object Explorer abre o próprio script T-SQL numa aba e executa na hora. A grade mostra os dados, a aba de mensagens mostra as linhas afetadas e o horário de conclusão, e a barra amarela acompanha o resultado. Cada seção tem o seu endereço (`/about`, `/tech-stack`, `/career`, `/projects`, `/beyond-the-terminal`, `/contact` e `/resume`), e a procedure `sp_DownloadCV` entrega o currículo em PDF. Para quem quer escrever as próprias consultas, a Nova Consulta (`/query`) tem destaque de sintaxe, autocomplete e o comando `HELP`. Para quem não conhece SQL, a Colinha lista as seções com um clique e traz exemplos prontos, e um tour de três passos mostra onde clicar. Também existem a paleta de cores (`/palette`) e a versão simples (`/simple`) com o conteúdo do portfólio.
 
 ## Stack
 
@@ -58,7 +58,7 @@ src/
 - Todos os textos do site ficam em `src/content/globals.ts`, um bloco por idioma. Um teste garante que os dois idiomas têm a mesma estrutura e que nomes, datas, links e tecnologias batem entre eles. A mesma fonte alimenta a versão simples e vai alimentar a grade de resultados.
 - O site existe em português e inglês. Na primeira visita vale o idioma do sistema (o que não for português abre em inglês); depois, a escolha do visitante fica salva. Um `LanguageProvider` coordena a troca, que acontece no navegador, sem mudar a URL e sem piscar o idioma errado. Sem JavaScript, a página aparece em português.
 - A interface do SSMS acompanha o idioma: em português aparecem Arquivo, Pesquisador de Objetos e Pronto; em inglês, File, Object Explorer e Ready.
-- Os menus abrem como no SSMS. O que já tem função no site funciona (Arquivo > Nova Consulta, Exibir > Pesquisador de Objetos, Ferramentas > Idioma, Ajuda > Versão simples) e o resto aparece esmaecido. Tudo funciona pelo teclado.
+- Os menus abrem como no SSMS. O que já tem função no site funciona (Arquivo > Nova Consulta, Exibir > Pesquisador de Objetos, Ferramentas > Idioma, Ajuda > Colinha, Fazer o tour e Versão simples) e o resto aparece esmaecido. Tudo funciona pelo teclado.
 - No celular, o Object Explorer vira uma gaveta lateral e os menus menos usados se recolhem em um botão; a Ajuda continua à vista.
 - O estado da interface usa só recursos do React (Context e `useReducer`), sem biblioteca extra.
 - A URL manda na aba ativa: abrir uma tabela muda o endereço, e voltar, avançar ou recarregar a página leva sempre à aba certa. As abas abertas não se repetem e a última nunca fecha.
@@ -68,7 +68,9 @@ src/
 - A Nova Consulta abre pelo botão da barra de ferramentas, pelo menu Arquivo ou com Alt+N, porque o Chrome e o Edge reservam o Ctrl+N para abrir uma janela. O editor é um campo de texto comum com o T-SQL colorido por cima, nas mesmas cores dos scripts, e um autocomplete próprio que sugere palavras-chave, tabelas e procedures conforme o contexto. Funciona com teclado, leitor de tela e celular. Com um trecho selecionado, F5 executa só a seleção, como no SSMS.
 - A tela de conexão aparece uma vez por sessão. Um script no `<head>` lê o `sessionStorage` antes da primeira pintura e marca o `<html>`; o CSS só mostra o diálogo para quem ainda não conectou. Quem recarrega a página não vê o diálogo piscar, e sem JavaScript o conteúdo aparece direto, sem diálogo.
 - O diálogo é um overlay: o conteúdo continua no HTML, e o resto da janela fica inerte enquanto ele está aberto. Cancelar, Esc ou o X levam à versão simples.
-- Os dois perfis de autenticação, visitante e dev, mostram o mesmo conteúdo. O perfil escolhido vira o login da barra amarela e do servidor no Object Explorer.
+- Os dois perfis de autenticação, visitante e dev, mostram o mesmo conteúdo. O perfil escolhido vira o login da barra amarela e do servidor no Object Explorer. Quem entra como visitante ganha o tour e a Colinha aberta; quem entra como dev começa sem tour e com a Colinha recolhida.
+- A Colinha, inspirada no Template Explorer do SSMS, fica à direita em telas largas e vira um painel que sobe de baixo nas menores. As seções são links de verdade, então funcionam até sem JavaScript; os exemplos vão para a Nova Consulta. Aberta ou recolhida, ela lembra a escolha durante a sessão, decidida pelo mesmo script do `<head>`, sem piscar.
+- O tour tem três passos e aparece uma vez por sessão, logo depois de conectar. O primeiro passo avança sozinho quando a pessoa abre uma tabela; Pular ou Esc fecham, e o menu Ajuda reinicia. Até a primeira tabela aberta, a pasta Tabelas pulsa de leve (ou fica só destacada, para quem prefere menos movimento).
 - Em Opções, "Usar cor personalizada" muda de verdade a cor da barra de conexão durante a sessão, com o texto em preto ou branco conforme o contraste. `Language=en` nos parâmetros adicionais troca o idioma do site ao conectar.
 - Os scripts são montados a partir do catálogo de objetos (`src/engine/catalog.ts`), o mesmo que alimenta a árvore, e coloridos pelo Shiki com o motor de expressões regulares em JavaScript, sem WASM. Por cima do Shiki há um ajuste: nomes de coluna como `Role` e `Description` voltam à cor de identificador, e `AND`, `OR`, `LIKE` e a pontuação ficam cinza, como no SSMS.
 - Nada do que o visitante digita é executado como código.
@@ -84,7 +86,7 @@ src/
 - [x] Execução das consultas
 - [x] Tela de conexão
 - [x] Nova consulta com autocomplete
-- [ ] Guia para quem não conhece SQL
+- [x] Guia para quem não conhece SQL
 - [ ] SEO e acessibilidade
 - [ ] Easter eggs
 - [ ] Publicação

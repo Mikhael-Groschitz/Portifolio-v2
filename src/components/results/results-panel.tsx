@@ -114,7 +114,7 @@ function RunViews({ run, labels, text }: Readonly<RunViewsProps>) {
   }
 
   return (
-    <div className={styles.panel}>
+    <>
       <div role="tablist" className={styles.tabs} onKeyDown={handleKeyDown}>
         {views.map((view) => (
           <button
@@ -154,7 +154,7 @@ function RunViews({ run, labels, text }: Readonly<RunViewsProps>) {
           {content(view)}
         </div>
       ))}
-    </div>
+    </>
   );
 }
 
@@ -164,10 +164,12 @@ export function ResultsPanel(props: Readonly<ResultsPanelProps>) {
     return null;
   }
   return (
-    <RunViews
-      key={`${activeDocument}-${activeRun.id}`}
-      run={activeRun}
-      {...props}
-    />
+    <div className={styles.panel} data-tour="results">
+      <RunViews
+        key={`${activeDocument}-${activeRun.id}`}
+        run={activeRun}
+        {...props}
+      />
+    </div>
   );
 }

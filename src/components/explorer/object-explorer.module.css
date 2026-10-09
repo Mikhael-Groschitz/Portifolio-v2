@@ -110,6 +110,24 @@
   outline-color: var(--text-on-selection);
 }
 
+.item[data-highlight] > .row {
+  animation: highlight 1.6s ease-in-out infinite;
+}
+
+@keyframes highlight {
+  50% {
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    box-shadow: inset 0 0 0 1px var(--accent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item[data-highlight] > .row {
+    animation: none;
+    box-shadow: inset 0 0 0 1px var(--accent);
+  }
+}
+
 .expander {
   display: flex;
   flex: none;

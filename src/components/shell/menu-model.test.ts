@@ -43,6 +43,8 @@ describe("menus", () => {
       "newQuery",
       "objectExplorer",
       "language",
+      "cheatsheet",
+      "tour",
       "simpleVersion",
     ]);
   });

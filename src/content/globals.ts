@@ -311,6 +311,69 @@ export const texts: Record<Locale, Texts> = {
           help: "Mostra esta ajuda.",
         },
       },
+      cheatsheet: {
+        title: "Colinha",
+        close: "Fechar a Colinha",
+        intro:
+          "Não precisa saber SQL: clique em um item e o resultado aparece na grade.",
+        sectionsTitle: "Para começar",
+        sections: {
+          about: "Quem sou eu",
+          "tech-stack": "Tech stack",
+          career: "Carreira",
+          projects: "Projetos",
+          "beyond-the-terminal": "Além do terminal",
+          contact: "Contato",
+          resume: "Currículo",
+        },
+        exploreTitle: "Para explorar",
+        exploreIntro:
+          "Estes exemplos vão para a Nova Consulta. Depois é só apertar F5 ou Alt+X.",
+        examples: [
+          {
+            command: "HELP",
+            description: "Lista as tabelas e os comandos.",
+          },
+          {
+            command: "SELECT * FROM dbo.Projects",
+            description: "Todos os meus projetos.",
+          },
+          {
+            command: "EXEC sp_help",
+            description: "Os objetos do banco, do jeito do SQL Server.",
+          },
+          {
+            command: "SELECT * FROM dbo.About;\nSELECT * FROM dbo.Contact;",
+            description: "Duas consultas de uma vez, uma grade para cada.",
+          },
+          {
+            command: "SELECT * FROM dbo.Carrer",
+            description: "Um erro de propósito, para ver a dica.",
+          },
+        ],
+      },
+      tour: {
+        progress: "{current} de {total}",
+        skip: "Pular",
+        next: "Próximo",
+        done: "Concluir",
+        steps: {
+          tables: {
+            title: "Clique em uma tabela",
+            text: "Cada tabela guarda uma parte da minha história. Escolha uma, como dbo.Career, e o resultado aparece na hora.",
+          },
+          results: {
+            title: "O resultado aparece aqui",
+            text: "A grade mostra os dados e a aba Mensagens conta as linhas. Os links de projetos, contatos e do currículo são clicáveis.",
+          },
+          query: {
+            title: "Quer explorar?",
+            text: "Alt+N abre uma nova consulta para você escrever os seus comandos. Na dúvida, digite HELP. A Colinha tem exemplos prontos.",
+          },
+        },
+        compactTablesText:
+          "Cada tabela guarda uma parte da minha história. Toque aqui, escolha uma, como dbo.Career, e o resultado aparece na hora.",
+      },
       connection: {
         connected: "Conectado. (1/1)",
         executing: "Executando consulta...",
@@ -694,6 +757,69 @@ export const texts: Record<Locale, Texts> = {
           spHelp: "Lists the tables and procedures in the database.",
           help: "Shows this help.",
         },
+      },
+      cheatsheet: {
+        title: "Cheat sheet",
+        close: "Close the cheat sheet",
+        intro:
+          "No SQL needed: click an item and the result shows up in the grid.",
+        sectionsTitle: "Start here",
+        sections: {
+          about: "Who I am",
+          "tech-stack": "Tech stack",
+          career: "Career",
+          projects: "Projects",
+          "beyond-the-terminal": "Beyond the terminal",
+          contact: "Contact",
+          resume: "Resume",
+        },
+        exploreTitle: "To explore",
+        exploreIntro:
+          "These examples go into the New Query. Then just press F5 or Alt+X.",
+        examples: [
+          {
+            command: "HELP",
+            description: "Lists the tables and the commands.",
+          },
+          {
+            command: "SELECT * FROM dbo.Projects",
+            description: "All of my projects.",
+          },
+          {
+            command: "EXEC sp_help",
+            description: "The database objects, the SQL Server way.",
+          },
+          {
+            command: "SELECT * FROM dbo.About;\nSELECT * FROM dbo.Contact;",
+            description: "Two queries at once, one grid each.",
+          },
+          {
+            command: "SELECT * FROM dbo.Carrer",
+            description: "A mistake on purpose, to see the hint.",
+          },
+        ],
+      },
+      tour: {
+        progress: "{current} of {total}",
+        skip: "Skip",
+        next: "Next",
+        done: "Done",
+        steps: {
+          tables: {
+            title: "Click a table",
+            text: "Each table holds a piece of my story. Pick one, like dbo.Career, and the result shows up right away.",
+          },
+          results: {
+            title: "The result shows up here",
+            text: "The grid shows the data and the Messages tab counts the rows. The links to projects, contacts and the resume are clickable.",
+          },
+          query: {
+            title: "Want to explore?",
+            text: "Alt+N opens a new query where you can write your own commands. If in doubt, type HELP. The cheat sheet has ready-made examples.",
+          },
+        },
+        compactTablesText:
+          "Each table holds a piece of my story. Tap here, pick one, like dbo.Career, and the result shows up right away.",
       },
       connection: {
         connected: "Connected. (1/1)",

@@ -10,6 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useGuide } from "@/components/cheatsheet/guide-context";
 import { MenuIcon } from "@/components/icons";
 import { useLanguage } from "@/components/locale/language-context";
 import { nextLocale } from "@/components/locale/locale-runtime";
@@ -60,6 +61,7 @@ export function MenuBar({ text, languageNames }: Readonly<MenuBarProps>) {
   const { locale, setLocale } = useLanguage();
   const { showExplorer } = useShell();
   const { openQuery } = useWorkspace();
+  const { openCheatsheet, startTour } = useGuide();
   const baseId = useId();
   const [openId, setOpenId] = useState<MenuTriggerId | null>(null);
   const [focusedId, setFocusedId] = useState<MenuTriggerId | null>(null);
@@ -125,13 +127,14 @@ export function MenuBar({ text, languageNames }: Readonly<MenuBarProps>) {
   }
 
   function runCommand(command: MenuCommand) {
-    if (command === "newQuery") {
-      openQuery();
-    } else if (command === "showExplorer") {
-      showExplorer();
-    } else {
-      setLocale(nextLocale(locale));
-    }
+    const commands: Record<MenuCommand, () => void> = {
+      newQuery: openQuery,
+      showExplorer,
+      switchLanguage: () => setLocale(nextLocale(locale)),
+      openCheatsheet,
+      startTour,
+    };
+    commands[command]();
   }
 
   function activate(item: MenuItem, trigger: MenuTrigger) {

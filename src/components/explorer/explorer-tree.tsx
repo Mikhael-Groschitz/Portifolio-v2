@@ -55,6 +55,7 @@ interface ExplorerTreeProps {
   nodes: readonly TreeNode[];
   labelledBy: string;
   selectedId: string;
+  highlightedId?: string;
   onActivate: (id: string) => void;
 }
 
@@ -62,6 +63,7 @@ export function ExplorerTree({
   nodes,
   labelledBy,
   selectedId,
+  highlightedId,
   onActivate,
 }: Readonly<ExplorerTreeProps>) {
   const [expanded, setExpanded] = useState<ReadonlySet<string>>(
@@ -144,6 +146,7 @@ export function ExplorerTree({
           };
         }}
         data-node-id={node.id}
+        data-highlight={node.id === highlightedId || undefined}
         role="treeitem"
         aria-level={level}
         aria-expanded={expandable ? isOpen : undefined}

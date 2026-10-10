@@ -313,6 +313,7 @@ export const texts: Record<Locale, Texts> = {
         travelFarewell: "Segure firme: a TARDIS está partindo para a versão 1.",
         returned: "De volta ao presente.",
         regenerated: "Regeneração concluída. Rosto novo, mesmas memórias.",
+        gameStarted: "Bom jogo! Esc volta ao SSMS a qualquer momento.",
         opensInNewTab: "abre em nova aba",
       },
       query: {
@@ -405,6 +406,12 @@ export const texts: Record<Locale, Texts> = {
         },
         compactTablesText:
           "Cada tabela guarda uma parte da minha história. Toque aqui, escolha uma, como dbo.Career, e o resultado aparece na hora.",
+      },
+      game: {
+        loading: "Carregando o jogo...",
+        touchOnly:
+          "Este jogo foi feito para teclado. Que tal jogar no computador? O resto do portfólio funciona normalmente por aqui.",
+        exit: "Voltar ao SSMS",
       },
       connection: {
         connected: "Conectado. (1/1)",
@@ -794,6 +801,7 @@ export const texts: Record<Locale, Texts> = {
         travelFarewell: "Hold on tight: the TARDIS is leaving for version 1.",
         returned: "Back to the present.",
         regenerated: "Regeneration complete. New face, same memories.",
+        gameStarted: "Have fun! Esc brings you back to SSMS at any time.",
         opensInNewTab: "opens in a new tab",
       },
       query: {
@@ -885,6 +893,12 @@ export const texts: Record<Locale, Texts> = {
         },
         compactTablesText:
           "Each table holds a piece of my story. Tap here, pick one, like dbo.Career, and the result shows up right away.",
+      },
+      game: {
+        loading: "Loading the game...",
+        touchOnly:
+          "This game was made for a keyboard. How about playing on a computer? The rest of the portfolio works fine here.",
+        exit: "Back to SSMS",
       },
       connection: {
         connected: "Connected. (1/1)",

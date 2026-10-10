@@ -10,9 +10,11 @@ import {
   useRef,
   useState,
 } from "react";
+import { readConnectionStatus } from "@/components/connect/connection-runtime";
 import { QUERY_DOCUMENT } from "@/components/shell/section-routes";
 import { useWorkspace } from "@/components/shell/workspace-context";
 import { V1_DATABASE } from "@/engine/catalog";
+import { KONAMI_CODE, LETTERS_FROM, nextKonamiStep } from "./konami";
 import {
   markDeparture,
   prefersReducedMotion,
@@ -30,7 +32,9 @@ const REGENERATION_MS = 3000;
 interface EasterEggValue {
   traveling: boolean;
   regenerating: boolean;
+  playing: boolean;
   boardTardis: () => void;
+  exitGame: () => void;
 }
 
 const EasterEggContext = createContext<EasterEggValue | null>(null);
@@ -42,8 +46,12 @@ export function EasterEggProvider({
     useWorkspace();
   const [landedId, setLandedId] = useState<number | null>(null);
   const [settledId, setSettledId] = useState<number | null>(null);
+  const [closedGameId, setClosedGameId] = useState<number | null>(null);
+  const [konamiGame, setKonamiGame] = useState(false);
   const traveling = effect?.kind === "travel" && effect.id !== landedId;
   const regenerating = effect?.kind === "regenerate" && effect.id !== settledId;
+  const playing =
+    konamiGame || (effect?.kind === "game" && effect.id !== closedGameId);
   const awaitingQuery = useRef(false);
   const typing = useRef(false);
   const timers = useRef(new Set<number>());
@@ -148,7 +156,7 @@ export function EasterEggProvider({
   }, [activeDocument, typeCommand]);
 
   const boardTardis = useCallback(() => {
-    if (typing.current || awaitingQuery.current || traveling) {
+    if (typing.current || awaitingQuery.current || traveling || playing) {
       return;
     }
     openQuery();
@@ -157,11 +165,45 @@ export function EasterEggProvider({
     } else {
       awaitingQuery.current = true;
     }
-  }, [activeDocument, openQuery, traveling, typeCommand]);
+  }, [activeDocument, openQuery, traveling, playing, typeCommand]);
+
+  useEffect(() => {
+    if (traveling || playing) {
+      return;
+    }
+    let step = 0;
+    function listen(event: KeyboardEvent) {
+      if (event.repeat || event.ctrlKey || event.altKey || event.metaKey) {
+        return;
+      }
+      if (readConnectionStatus() === "pending") {
+        step = 0;
+        return;
+      }
+      const next = nextKonamiStep(step, event.key);
+      if (next > step && step >= LETTERS_FROM) {
+        event.preventDefault();
+      }
+      step = next;
+      if (step === KONAMI_CODE.length) {
+        step = 0;
+        setKonamiGame(true);
+      }
+    }
+    document.addEventListener("keydown", listen);
+    return () => document.removeEventListener("keydown", listen);
+  }, [traveling, playing]);
+
+  const exitGame = useCallback(() => {
+    setKonamiGame(false);
+    if (effect?.kind === "game") {
+      setClosedGameId(effect.id);
+    }
+  }, [effect]);
 
   const value = useMemo(
-    () => ({ traveling, regenerating, boardTardis }),
-    [traveling, regenerating, boardTardis],
+    () => ({ traveling, regenerating, playing, boardTardis, exitGame }),
+    [traveling, regenerating, playing, boardTardis, exitGame],
   );
 
   return <EasterEggContext value={value}>{children}</EasterEggContext>;

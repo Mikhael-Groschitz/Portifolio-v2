@@ -38,7 +38,7 @@ interface ShellFrameProps {
   statusBar: ReactNode;
   tour: ReactNode;
   dialog: ReactNode;
-  timeTravel: ReactNode;
+  easterEggs: ReactNode;
 }
 
 function focusTree(container: HTMLElement | null) {
@@ -60,14 +60,14 @@ export function ShellFrame({
   statusBar,
   tour,
   dialog,
-  timeTravel,
+  easterEggs,
 }: Readonly<ShellFrameProps>) {
   const compact = useMediaQuery(COMPACT_MEDIA_QUERY);
   const connection = useConnectionStatus();
   const { sheetOpen, closeCheatsheet } = useGuide();
-  const { traveling, regenerating } = useEasterEggs();
+  const { traveling, regenerating, playing } = useEasterEggs();
   const blocked = connection === "pending";
-  const frozen = blocked || traveling;
+  const frozen = blocked || traveling || playing;
   const [drawerRequested, setDrawerRequested] = useState(false);
   const explorerOpen = compact && drawerRequested;
   const overlayOpen = explorerOpen || sheetOpen;
@@ -167,7 +167,7 @@ export function ShellFrame({
         {tour}
         {dialog}
       </div>
-      {timeTravel}
+      {easterEggs}
     </ShellContext>
   );
 }

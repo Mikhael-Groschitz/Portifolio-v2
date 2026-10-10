@@ -18,7 +18,7 @@ import { normalizeStatement } from "./normalize";
 
 export const V2_LAUNCH_DATE = "2026-10-06";
 
-export type Effect = "travel" | "regenerate" | "return";
+export type Effect = "travel" | "regenerate" | "return" | "game";
 
 export interface EasterEggContext {
   now?: Date;
@@ -45,6 +45,12 @@ const USE_V1 = normalizeStatement(`USE ${V1_DATABASE}`);
 const REGENERATE = new Set(
   objectReferences("sp_Regenerate").flatMap((target) =>
     [target, `EXEC ${target}`, `EXECUTE ${target}`].map(normalizeStatement),
+  ),
+);
+
+const KONAMI = new Set(
+  objectReferences("konami").map((target) =>
+    normalizeStatement(`SELECT * FROM ${target}`),
   ),
 );
 
@@ -130,6 +136,10 @@ export const EASTER_EGGS: readonly EasterEgg[] = [
   {
     match: (statement) => REGENERATE.has(statement),
     run: () => ({ kind: "results", results: [], effect: "regenerate" }),
+  },
+  {
+    match: (statement) => KONAMI.has(statement),
+    run: () => ({ kind: "results", results: [], effect: "game" }),
   },
 ];
 

@@ -49,6 +49,8 @@ function effectLines(
       return [changed, text.returned];
     case "regenerate":
       return [text.regenerated];
+    case "game":
+      return [text.gameStarted];
     default:
       return [];
   }

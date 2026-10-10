@@ -168,10 +168,36 @@ describe("sp_Regenerate", () => {
   });
 });
 
+describe("SELECT * FROM konami", () => {
+  it.each([
+    "SELECT * FROM konami",
+    "select * from dbo.KONAMI;",
+    "SELECT * FROM Portfolio.dbo.konami",
+  ])("opens the game with %j", (command) => {
+    expect(execute(command, offline)).toEqual({
+      kind: "results",
+      database: "Portfolio",
+      results: [],
+      effect: "game",
+    });
+  });
+
+  it("keeps the batch running around the game", () => {
+    const outcome = execute(
+      "SELECT * FROM konami; SELECT * FROM dbo.About;",
+      offline,
+    );
+    expect(outcome).toMatchObject({ effect: "game" });
+    expect(resultSetsOf(outcome)).toHaveLength(1);
+  });
+});
+
 describe("secrets", () => {
   it("stay out of HELP", () => {
     const listed = JSON.stringify(execute("HELP", online));
-    expect(listed).not.toMatch(/Portfolio_v1|sp_Regenerate|SYSTEM_TIME/i);
+    expect(listed).not.toMatch(
+      /Portfolio_v1|sp_Regenerate|SYSTEM_TIME|konami/i,
+    );
   });
 
   it("bring the window back to the present", () => {

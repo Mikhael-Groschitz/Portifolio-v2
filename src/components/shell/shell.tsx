@@ -4,6 +4,7 @@ import { GuideProvider } from "@/components/cheatsheet/guide-context";
 import { Tour } from "@/components/cheatsheet/tour";
 import { ConnectDialog } from "@/components/connect/connect-dialog";
 import { EasterEggProvider } from "@/components/easter-eggs/easter-egg-context";
+import { GameOverlay } from "@/components/easter-eggs/game-overlay";
 import { TimeTravelOverlay } from "@/components/easter-eggs/time-travel-overlay";
 import { ObjectExplorer } from "@/components/explorer/object-explorer";
 import { localize } from "@/content";
@@ -37,10 +38,13 @@ export function Shell({ children }: Readonly<{ children: ReactNode }>) {
                 login={localize((texts) => texts.shell.connection.login)}
               />
             }
-            timeTravel={
-              <TimeTravelOverlay
-                text={localize((texts) => texts.shell.connection.traveling)}
-              />
+            easterEggs={
+              <>
+                <TimeTravelOverlay
+                  text={localize((texts) => texts.shell.connection.traveling)}
+                />
+                <GameOverlay text={localize((texts) => texts.shell.game)} />
+              </>
             }
           />
         </EasterEggProvider>

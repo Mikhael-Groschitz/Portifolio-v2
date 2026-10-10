@@ -140,7 +140,14 @@ export interface ResultsText {
   travelFarewell: string;
   returned: string;
   regenerated: string;
+  gameStarted: string;
   opensInNewTab: string;
+}
+
+export interface GameOverlayText {
+  loading: string;
+  touchOnly: string;
+  exit: string;
 }
 
 export type CompletionKind = "keyword" | "table" | "procedure" | "database";
@@ -282,6 +289,7 @@ export interface ShellText {
   query: QueryText;
   cheatsheet: CheatsheetText;
   tour: TourText;
+  game: GameOverlayText;
   connection: ConnectionText;
   connect: ConnectText;
   status: {
